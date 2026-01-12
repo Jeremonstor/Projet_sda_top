@@ -1,0 +1,432 @@
+\documentclass[12pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\geometry{margin=2.5cm}
+
+% Configuration des listings
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{orange},
+    showstringspaces=false,
+    frame=single,
+    breaklines=true
+}
+
+% Titre
+\title{
+    \vspace{-2cm}
+    \textbf{Analyse des Accidents de Vélo en Île-de-France}\\
+    \large Projet de Science des Données Appliquée
+}
+\author{
+    Projet SDA\\
+    \textit{Master Data Science}
+}
+\date{Janvier 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Ce rapport présente une analyse approfondie des accidents de vélo en Île-de-France 
+en utilisant des techniques de machine learning. Nous répondons à deux questions 
+principales : (1) identifier les communes à risque élevé d'accidents, et (2) prédire 
+le nombre d'accidents par commune en fonction des aménagements cyclables. L'analyse 
+s'appuie sur trois sources de données fusionnées : les accidents de vélo, les 
+aménagements cyclables et les comptages de trafic vélo. Les résultats montrent qu'une 
+régression logistique permet de classifier le risque avec un ROC-AUC de 95.6\%, 
+tandis qu'un modèle Gradient Boosting prédit le nombre d'accidents avec un R² de 89.2\%.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ============================================================================
+\section{Introduction}
+% ============================================================================
+
+\subsection{Contexte}
+
+La pratique du vélo connaît un essor considérable en Île-de-France ces dernières années,
+favorisée par les politiques de mobilité durable et le développement des infrastructures
+cyclables. Cependant, cette augmentation du trafic cycliste s'accompagne d'une
+problématique de sécurité routière qu'il convient d'analyser et de modéliser.
+
+\subsection{Objectifs du Projet}
+
+Ce projet vise à répondre à deux questions fondamentales :
+
+\begin{enumerate}
+    \item \textbf{Classification du risque} : La commune présente-t-elle un risque 
+    élevé d'accidents de vélo ?
+    \item \textbf{Prédiction du nombre d'accidents} : Peut-on prédire le nombre 
+    d'accidents dans une commune en fonction de ses aménagements cyclables ?
+\end{enumerate}
+
+\subsection{Méthodologie}
+
+Notre approche se décompose en plusieurs étapes :
+\begin{itemize}
+    \item Collecte et fusion de trois sources de données
+    \item Préparation et nettoyage des données
+    \item Analyse exploratoire
+    \item Modélisation par machine learning
+    \item Comparaison des algorithmes et conclusions
+\end{itemize}
+
+% ============================================================================
+\section{Description des Données}
+% ============================================================================
+
+\subsection{Sources de Données}
+
+Nous utilisons trois jeux de données complémentaires :
+
+\subsubsection{Accidents de Vélo}
+Ce dataset contient \textbf{80 022 accidents} sur l'ensemble de la France, dont 
+\textbf{22 609 en Île-de-France}. Les principales variables sont :
+\begin{itemize}
+    \item Localisation (département, commune, coordonnées GPS)
+    \item Date et heure de l'accident
+    \item Gravité (indemne, blessé léger, hospitalisé, tué)
+    \item Conditions (luminosité, météo, état de la chaussée)
+    \item Caractéristiques de la victime (âge, sexe)
+\end{itemize}
+
+\subsubsection{Aménagements Cyclables}
+Ce dataset recense \textbf{143 060 aménagements cyclables} en Île-de-France :
+\begin{itemize}
+    \item Type de voie (piste cyclable, bande cyclable, voie partagée)
+    \item Longueur de l'aménagement
+    \item Revêtement et état
+    \item Localisation par commune (code INSEE)
+\end{itemize}
+
+\subsubsection{Comptages Vélo}
+Ce dataset contient \textbf{933 757 mesures} de comptage horaire :
+\begin{itemize}
+    \item Identifiant et localisation du compteur
+    \item Comptage horaire de passages
+    \item Date et heure de la mesure
+\end{itemize}
+
+\subsection{Fusion des Données}
+
+Les données ont été fusionnées au niveau communal (code INSEE) pour créer un 
+dataset final de \textbf{1 124 communes} avec 38 variables. La Figure~\ref{fig:pipeline}
+illustre le processus de fusion.
+
+\begin{figure}[H]
+    \centering
+    \fbox{\parbox{0.9\textwidth}{
+        \centering
+        \textbf{Pipeline de Fusion des Données}\\[0.5cm]
+        Accidents (22 609) $\rightarrow$ Agrégation par commune $\rightarrow$ 770 communes\\
+        $\downarrow$\\
+        Aménagements (143 060) $\rightarrow$ Agrégation par commune $\rightarrow$ 1 053 communes\\
+        $\downarrow$\\
+        Fusion (outer join sur code INSEE)\\
+        $\downarrow$\\
+        \textbf{Dataset Final : 1 124 communes, 38 features}
+    }}
+    \caption{Pipeline de préparation des données}
+    \label{fig:pipeline}
+\end{figure}
+
+\subsection{Variables Créées}
+
+Plusieurs features ont été calculées lors de la fusion :
+\begin{itemize}
+    \item \texttt{nb\_accidents} : nombre total d'accidents par commune
+    \item \texttt{nb\_accidents\_graves} : accidents avec hospitalisation ou décès
+    \item \texttt{taux\_accidents\_graves} : ratio d'accidents graves
+    \item \texttt{nb\_amenagements} : nombre d'infrastructures cyclables
+    \item \texttt{longueur\_totale\_amenagements} : longueur cumulée en mètres
+    \item \texttt{ratio\_pistes\_cyclables} : proportion de pistes séparées
+    \item \texttt{risque\_eleve} : variable binaire (1 si $\geq$ 75\textsuperscript{e} percentile)
+\end{itemize}
+
+% ============================================================================
+\section{Analyse 1 : Classification du Risque}
+% ============================================================================
+
+\subsection{Problématique}
+
+La première question consiste à classifier les communes selon leur niveau de risque
+d'accidents de vélo. On définit une commune à \textbf{risque élevé} si son nombre
+d'accidents est supérieur ou égal au 75\textsuperscript{e} percentile (soit $\geq 6$ accidents).
+
+\subsection{Modèles Testés}
+
+Six algorithmes de classification ont été comparés :
+\begin{enumerate}
+    \item Régression Logistique (avec pondération des classes)
+    \item Random Forest Classifier
+    \item Gradient Boosting Classifier
+    \item XGBoost Classifier
+    \item LightGBM Classifier
+    \item SVM avec noyau RBF
+\end{enumerate}
+
+\subsection{Résultats}
+
+\begin{table}[H]
+    \centering
+    \caption{Comparaison des modèles de classification}
+    \label{tab:classification}
+    \begin{tabular}{lccccc}
+        \toprule
+        \textbf{Modèle} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} & \textbf{ROC-AUC} \\
+        \midrule
+        Logistic Regression & 0.884 & 0.758 & 0.833 & \textbf{0.794} & \textbf{0.956} \\
+        Random Forest & 0.898 & 0.863 & 0.733 & 0.793 & 0.951 \\
+        SVM (RBF) & 0.880 & 0.739 & 0.850 & 0.791 & 0.953 \\
+        LightGBM & 0.889 & 0.807 & 0.767 & 0.786 & 0.940 \\
+        XGBoost & 0.884 & 0.793 & 0.767 & 0.780 & 0.941 \\
+        Gradient Boosting & 0.880 & 0.824 & 0.700 & 0.757 & 0.953 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Analyse des Résultats}
+
+Le modèle de \textbf{Régression Logistique} obtient les meilleures performances 
+globales avec :
+\begin{itemize}
+    \item Un \textbf{F1-Score de 79.4\%}, équilibrant precision et recall
+    \item Un \textbf{ROC-AUC de 95.6\%}, indiquant une excellente capacité discriminative
+    \item Une bonne stabilité en validation croisée (CV F1 = 0.816 $\pm$ 0.033)
+\end{itemize}
+
+La Figure~\ref{fig:roc} présente les courbes ROC comparatives des modèles.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../outputs/roc_curves_classification.png}
+    \caption{Courbes ROC des modèles de classification}
+    \label{fig:roc}
+\end{figure}
+
+\subsection{Importance des Features}
+
+L'analyse de l'importance des features révèle que les variables les plus 
+discriminantes sont :
+\begin{enumerate}
+    \item \texttt{nb\_amenagements} : nombre d'infrastructures cyclables
+    \item \texttt{longueur\_totale\_amenagements} : longueur des aménagements
+    \item \texttt{nb\_pistes\_cyclables} : nombre de pistes dédiées
+    \item \texttt{est\_paris} : indicateur d'arrondissement parisien
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../outputs/feature_importance_classification.png}
+    \caption{Importance des features par modèle (Classification)}
+    \label{fig:feat_class}
+\end{figure}
+
+% ============================================================================
+\section{Analyse 2 : Prédiction du Nombre d'Accidents}
+% ============================================================================
+
+\subsection{Problématique}
+
+La seconde question vise à prédire le nombre exact d'accidents par commune en 
+fonction des caractéristiques des aménagements cyclables. Il s'agit d'un problème 
+de \textbf{régression}.
+
+\subsection{Modèles Testés}
+
+Sept algorithmes de régression ont été comparés :
+\begin{enumerate}
+    \item Régression Linéaire
+    \item Ridge Regression (régularisation L2)
+    \item Lasso Regression (régularisation L1)
+    \item Random Forest Regressor
+    \item Gradient Boosting Regressor
+    \item XGBoost Regressor
+    \item LightGBM Regressor
+\end{enumerate}
+
+\subsection{Résultats}
+
+\begin{table}[H]
+    \centering
+    \caption{Comparaison des modèles de régression}
+    \label{tab:regression}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Modèle} & \textbf{RMSE} & \textbf{MAE} & \textbf{R²} & \textbf{CV R²} \\
+        \midrule
+        Gradient Boosting & \textbf{37.06} & \textbf{8.40} & \textbf{0.892} & 0.897 $\pm$ 0.025 \\
+        XGBoost & 37.53 & 8.43 & 0.889 & \textbf{0.900 $\pm$ 0.018} \\
+        Random Forest & 37.80 & 9.06 & 0.888 & 0.886 $\pm$ 0.027 \\
+        Linear Regression & 42.89 & 11.39 & 0.856 & 0.855 $\pm$ 0.072 \\
+        Ridge Regression & 43.23 & 11.34 & 0.853 & 0.857 $\pm$ 0.067 \\
+        Lasso Regression & 43.87 & 11.38 & 0.849 & 0.856 $\pm$ 0.065 \\
+        LightGBM & 45.41 & 10.29 & 0.838 & 0.825 $\pm$ 0.074 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Analyse des Résultats}
+
+Le modèle \textbf{Gradient Boosting} obtient les meilleures performances :
+\begin{itemize}
+    \item \textbf{R² = 0.892} : le modèle explique 89.2\% de la variance
+    \item \textbf{MAE = 8.40} : erreur moyenne de 8.4 accidents par commune
+    \item \textbf{RMSE = 37.06} : pénalise davantage les grosses erreurs
+    \item Excellente stabilité en validation croisée
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../outputs/predictions_vs_reel.png}
+    \caption{Prédictions vs valeurs réelles pour différents modèles}
+    \label{fig:pred}
+\end{figure}
+
+\subsection{Analyse des Corrélations}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../outputs/correlation_features.png}
+    \caption{Corrélation des features avec le nombre d'accidents}
+    \label{fig:corr}
+\end{figure}
+
+Les features les plus corrélées avec le nombre d'accidents sont :
+\begin{itemize}
+    \item \texttt{nb\_pistes\_cyclables} : $r = 0.844$
+    \item \texttt{nb\_amenagements} : $r = 0.841$
+    \item \texttt{longueur\_totale\_amenagements} : $r = 0.817$
+\end{itemize}
+
+\textbf{Interprétation} : La corrélation positive entre aménagements et accidents 
+s'explique par le fait que les communes bien équipées ont aussi un trafic cycliste 
+plus important, donc statistiquement plus d'accidents.
+
+% ============================================================================
+\section{Discussion}
+% ============================================================================
+
+\subsection{Synthèse des Résultats}
+
+\begin{table}[H]
+    \centering
+    \caption{Synthèse des meilleurs modèles}
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{Question} & \textbf{Meilleur Modèle} & \textbf{Performance} \\
+        \midrule
+        Classification du risque & Régression Logistique & ROC-AUC = 95.6\% \\
+        Prédiction nb accidents & Gradient Boosting & R² = 89.2\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Limites de l'Étude}
+
+\begin{itemize}
+    \item \textbf{Biais de report} : tous les accidents ne sont pas déclarés
+    \item \textbf{Données de comptage} : seuls 69 compteurs pour toute l'IDF
+    \item \textbf{Variables manquantes} : population, densité urbaine, trafic automobile
+    \item \textbf{Temporalité} : pas de prise en compte de l'évolution temporelle
+\end{itemize}
+
+\subsection{Perspectives}
+
+Pour améliorer les modèles, on pourrait :
+\begin{itemize}
+    \item Intégrer des données démographiques (population, densité)
+    \item Ajouter des données de trafic automobile
+    \item Effectuer une analyse temporelle (tendances, saisonnalité)
+    \item Utiliser des modèles spatiaux (autocorrélation géographique)
+\end{itemize}
+
+% ============================================================================
+\section{Conclusion}
+% ============================================================================
+
+Ce projet a permis de développer deux modèles prédictifs performants pour l'analyse 
+des accidents de vélo en Île-de-France :
+
+\begin{enumerate}
+    \item Un \textbf{modèle de classification} (Régression Logistique) capable 
+    d'identifier les communes à risque élevé avec une précision de 88\% et un 
+    ROC-AUC de 96\%.
+    
+    \item Un \textbf{modèle de régression} (Gradient Boosting) capable de prédire 
+    le nombre d'accidents avec un R² de 89\%, soit une erreur moyenne de 8.4 
+    accidents par commune.
+\end{enumerate}
+
+\textbf{Recommandations pour les décideurs :}
+\begin{itemize}
+    \item Prioriser les communes à haut risque identifiées par le modèle
+    \item Privilégier les pistes cyclables séparées de la circulation
+    \item Améliorer l'éclairage et la signalisation sur les voies cyclables
+    \item Développer les comptages pour mieux mesurer l'exposition au risque
+\end{itemize}
+
+Les modèles développés constituent un outil d'aide à la décision pour les 
+collectivités souhaitant optimiser leur politique de sécurité cycliste.
+
+% ============================================================================
+\section*{Annexes}
+% ============================================================================
+
+\subsection*{A. Structure du Projet}
+
+\begin{verbatim}
+Projet_sda_top/
++-- data/
+|   +-- accidentsVelo.csv
+|   +-- amenagements-velo-en-ile-de-france.csv
+|   +-- comptage-velo-donnees-compteurs.csv
+|   +-- dataset_final_idf.csv
++-- src/
+|   +-- 01_preparation_donnees.py
+|   +-- 02_classification_risque.py
+|   +-- 03_prediction_accidents.py
++-- outputs/
+|   +-- roc_curves_classification.png
+|   +-- confusion_matrix_classification.png
+|   +-- feature_importance_classification.png
+|   +-- predictions_vs_reel.png
+|   +-- ...
++-- rapport/
+|   +-- rapport.tex
++-- requirements.txt
+\end{verbatim}
+
+\subsection*{B. Technologies Utilisées}
+
+\begin{itemize}
+    \item \textbf{Python 3.12}
+    \item \textbf{pandas} : manipulation de données
+    \item \textbf{scikit-learn} : modèles de machine learning
+    \item \textbf{XGBoost, LightGBM} : modèles de gradient boosting
+    \item \textbf{matplotlib, seaborn} : visualisation
+    \item \textbf{LaTeX} : rédaction du rapport
+\end{itemize}
+
+\end{document}

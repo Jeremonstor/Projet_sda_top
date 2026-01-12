@@ -1,0 +1,29 @@
+
+ANALYSE DE CLASSIFICATION - RISQUE D'ACCIDENTS DE VÉLO
+═══════════════════════════════════════════════════════════════════════
+
+OBJECTIF:
+Prédire si une commune d'Île-de-France présente un risque élevé 
+d'accidents de vélo en fonction de ses aménagements cyclables.
+
+MEILLEUR MODÈLE: Logistic Regression
+
+PERFORMANCES:
+  • Accuracy:  88.4%
+  • Precision: 75.8%  
+  • Recall:    83.3%
+  • F1-Score:  79.4%
+  • ROC-AUC:   95.6%
+
+INTERPRÉTATION:
+- Le modèle permet d'identifier les communes à risque élevé avec une 
+  précision de 76% et un rappel de 83%.
+- L'aire sous la courbe ROC de 0.96 indique une bonne 
+  capacité discriminative du modèle.
+- Les features les plus importantes sont liées au nombre et à la longueur
+  des aménagements cyclables.
+
+RECOMMANDATIONS:
+1. Les communes avec peu d'aménagements cyclables sont plus à risque.
+2. La présence de pistes cyclables dédiées réduit le risque.
+3. Les arrondissements parisiens présentent un profil spécifique.
