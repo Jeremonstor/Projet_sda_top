@@ -1,0 +1,10 @@
+Chacun regarde un code python, et analyse le code (ce qui ne va pas, ce qu'on a pas fait) et
+les images (quelles images correspond à quoi, est ce que c'est utile)
+
+Faire le rapport bien (avec nos noms, de manière scientifique comme demandée), mettre des images
+importantes dans le rapport
+Changer quelques phrases pour faire genre on l'a fait nous mêmes (mettre des fautes d'orthographes ?)
+Répartition des tâches (dans le rapport, apprendre par coeur des trucs qu'on "a fait")
+
+
+Si on a le temps, rajouter un autre script et d'autres datasets
