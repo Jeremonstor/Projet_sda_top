@@ -160,7 +160,7 @@ La \textbf{Régression Logistique} obtient les meilleures performances globales 
     \item Une bonne stabilité en validation croisée (écart-type de 3.3\%)
 \end{itemize}
 
-Ce résultat peut sembler surprenant : un modèle simple (régression logistique) surpasse des modèles plus complexes (boosting, forêts aléatoires). Cela s'explique par la nature du problème : la relation entre les features et le risque est essentiellement linéaire. Les communes à risque élevé sont celles avec beaucoup d'aménagements cyclables, car ces communes attirent plus de cyclistes.
+Ce résultat peut sembler surprenant : un modèle simple (régression logistique) surpasse des modèles plus complexes (boosting, forêts aléatoires). Cela s'explique par la nature du problème : la relation entre les features et le risque est essentielement linéaire. Les communes à risque élevé sont celles avec beaucoup d'aménagements cyclables, car ces communes attirent plus de cyclistes.
 
 \begin{figure}[H]
     \centering
@@ -274,7 +274,7 @@ Ce taux, classique en épidémiologie, normalise par la population et permet de 
     \end{tabular}
 \end{table}
 
-Les deux taux présentent une forte asymétrie (skewness élevé), ce qui indique que la plupart des communes ont un faible taux de risque, tandis que quelques communes ont des taux très élevés. Pour réduire cette asymétrie, nous avons appliqué une \textbf{transformation logarithmique} : $y' = \log(1 + y)$.
+Les deux taux présentent une forte asymétrie (skewness élevée), ce qui indique que la plupart des communes ont un faible taux de risque, tandis que quelques communes ont des taux très élevés. Pour réduire cette asymétrie, nous avons appliqué une \textbf{transformation logarithmique} : $y' = \log(1 + y)$.
 
 \subsection{Résultats de la modélisation}
 
@@ -318,7 +318,7 @@ Cinq modèles de machine learning ont été testés pour prédire chaque taux de
 
 Les performances obtenues avec les taux de risque sont \textbf{nettement inférieures} à celles de l'approche par nombre brut (R² maximum de 30\% contre 89\%). Ce résultat est en réalité plus honnête et plus informatif.
 
-\textbf{Élimination du biais de taille :} En normalisant par la population ou la longueur d'aménagement, le modèle ne peut plus identifier simplement les grandes communes. Paris n'a plus un poids disproportionné.
+\textbf{Élimination du biais de taille :} En normalisant par la population ou la longueur d'aménagement, le modèle ne peut plus identifier simplement les grandes communes. Paris n'a plus un poids disproportionnée.
 
 \textbf{Complexité réelle du risque :} Le risque d'accident cycliste dépend de nombreux facteurs absents de nos données : comportement des usagers, densité du trafic automobile, conditions météorologiques, qualité de l'éclairage.
 
@@ -394,7 +394,7 @@ La \textbf{classification binaire} du risque communal (élevé vs faible) attein
 
 La \textbf{prédiction du nombre brut d'accidents} affiche un R² de 89\%, mais cette performance est biaisée par l'effet de taille des communes (Paris concentre 61\% des accidents) et une corrélation paradoxale entre aménagements et accidents.
 
-L'\textbf{approche par taux de risque normalisés} (par habitant ou par kilomètre d'aménagement) offre une méthodologie plus rigoureuse. Les performances plus modestes (R² de 20-30\%) reflètent la complexité réelle du problème et l'insuffisance des données disponibles.
+L'\textbf{approche par taux de risque normalisés} (par habitant ou par kilomètre d'aménagement) offre une méthodologie plus rigoureuse. Les performance plus modestes (R² de 20-30\%) reflètent la complexité réelle du problème et l'insuffisance des données disponibles.
 
 Cette étude illustre qu'un indicateur de performance élevé ne garantit pas la validité d'un modèle. L'analyse critique des données et des résultats reste indispensable pour éviter des conclusions erronées.
 
