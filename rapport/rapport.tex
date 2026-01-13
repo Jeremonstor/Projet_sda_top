@@ -299,10 +299,25 @@ Le modèle \textbf{Gradient Boosting} obtient les meilleures performances :
 
 \begin{figure}[H]
     \centering
+    \includegraphics[width=0.9\textwidth]{../outputs/predictions_vs_reel_zoom.png}
+    \caption{Prédictions vs valeurs réelles - Zoom sur les petites valeurs}
+    \label{fig:pred_zoom}
+\end{figure}
+
+La Figure~\ref{fig:pred_zoom} permet d'observer la qualité des prédictions pour les 
+communes avec peu d'accidents, où la majorité des données se concentre. On constate 
+que les modèles sont globalement bien calibrés pour ces valeurs.
+
+\begin{figure}[H]
+    \centering
     \includegraphics[width=0.9\textwidth]{../outputs/predictions_vs_reel.png}
-    \caption{Prédictions vs valeurs réelles pour différents modèles}
+    \caption{Prédictions vs valeurs réelles - Vue globale (incluant les outliers)}
     \label{fig:pred}
 \end{figure}
+
+La Figure~\ref{fig:pred} montre la vue d'ensemble incluant les communes avec 
+beaucoup d'accidents (outliers comme Paris), confirmant la robustesse des modèles 
+sur toute la plage de valeurs.
 
 \subsection{Analyse des Corrélations}
 
@@ -389,44 +404,5 @@ des accidents de vélo en Île-de-France :
 
 Les modèles développés constituent un outil d'aide à la décision pour les 
 collectivités souhaitant optimiser leur politique de sécurité cycliste.
-
-% ============================================================================
-\section*{Annexes}
-% ============================================================================
-
-\subsection*{A. Structure du Projet}
-
-\begin{verbatim}
-Projet_sda_top/
-+-- data/
-|   +-- accidentsVelo.csv
-|   +-- amenagements-velo-en-ile-de-france.csv
-|   +-- comptage-velo-donnees-compteurs.csv
-|   +-- dataset_final_idf.csv
-+-- src/
-|   +-- 01_preparation_donnees.py
-|   +-- 02_classification_risque.py
-|   +-- 03_prediction_accidents.py
-+-- outputs/
-|   +-- roc_curves_classification.png
-|   +-- confusion_matrix_classification.png
-|   +-- feature_importance_classification.png
-|   +-- predictions_vs_reel.png
-|   +-- ...
-+-- rapport/
-|   +-- rapport.tex
-+-- requirements.txt
-\end{verbatim}
-
-\subsection*{B. Technologies Utilisées}
-
-\begin{itemize}
-    \item \textbf{Python 3.12}
-    \item \textbf{pandas} : manipulation de données
-    \item \textbf{scikit-learn} : modèles de machine learning
-    \item \textbf{XGBoost, LightGBM} : modèles de gradient boosting
-    \item \textbf{matplotlib, seaborn} : visualisation
-    \item \textbf{LaTeX} : rédaction du rapport
-\end{itemize}
 
 \end{document}

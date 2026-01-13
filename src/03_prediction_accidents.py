@@ -244,6 +244,51 @@ def tracer_predictions_vs_reel(predictions, y_test, best_model_name):
     plt.close()
     print(f"\n✓ Graphique prédictions vs réel sauvegardé: {OUTPUT_DIR}/predictions_vs_reel.png")
 
+def tracer_predictions_vs_reel_zoom(predictions, y_test, best_model_name):
+    """Trace les prédictions vs valeurs réelles - version zoomée sur les petites valeurs."""
+    fig, axes = plt.subplots(2, 2, figsize=(14, 12))
+    
+    # Sélectionner 4 modèles
+    models_to_plot = ['Linear Regression', 'Random Forest', 'XGBoost', best_model_name]
+    models_to_plot = [m for m in models_to_plot if m in predictions][:4]
+    
+    # Définir la limite de zoom (ex: 75e percentile des valeurs)
+    zoom_limit = np.percentile(y_test, 90)
+    zoom_limit = max(zoom_limit, 50)  # Au moins 50 accidents
+    
+    for ax, model_name in zip(axes.flatten(), models_to_plot):
+        y_pred = predictions[model_name]
+        
+        # Filtrer pour le zoom
+        mask = (y_test <= zoom_limit) & (y_pred <= zoom_limit)
+        y_test_zoom = y_test[mask]
+        y_pred_zoom = y_pred[mask]
+        
+        ax.scatter(y_test_zoom, y_pred_zoom, alpha=0.5, edgecolors='k', linewidth=0.5)
+        
+        # Ligne parfaite
+        ax.plot([0, zoom_limit], [0, zoom_limit], 'r--', linewidth=2, label='Prédiction parfaite')
+        
+        # R² sur les données zoomées
+        if len(y_test_zoom) > 1:
+            r2 = r2_score(y_test_zoom, y_pred_zoom)
+            ax.text(0.05, 0.95, f'R² = {r2:.3f}\n(n={len(y_test_zoom)})', transform=ax.transAxes, 
+                    fontsize=12, verticalalignment='top',
+                    bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+        
+        ax.set_xlabel('Valeurs réelles', fontsize=10)
+        ax.set_ylabel('Prédictions', fontsize=10)
+        ax.set_title(model_name, fontsize=12)
+        ax.set_xlim(0, zoom_limit)
+        ax.set_ylim(0, zoom_limit)
+        ax.legend(loc='lower right')
+    
+    plt.suptitle(f'Prédictions vs Valeurs Réelles - Zoom (≤ {int(zoom_limit)} accidents)', fontsize=14, y=1.02)
+    plt.tight_layout()
+    plt.savefig(os.path.join(OUTPUT_DIR, 'predictions_vs_reel_zoom.png'), dpi=150)
+    plt.close()
+    print(f"✓ Graphique prédictions vs réel (zoom) sauvegardé: {OUTPUT_DIR}/predictions_vs_reel_zoom.png")
+
 def tracer_residus(predictions, y_test, best_model_name):
     """Trace l'analyse des résidus pour le meilleur modèle."""
     y_pred = predictions[best_model_name]
@@ -445,6 +490,7 @@ def main():
     print("=" * 70)
     
     tracer_predictions_vs_reel(predictions, y_test, best_model_name)
+    tracer_predictions_vs_reel_zoom(predictions, y_test, best_model_name)
     tracer_residus(predictions, y_test, best_model_name)
     tracer_importance_features(trained_models, feature_names)
     tracer_comparaison_metriques(results_sorted)
