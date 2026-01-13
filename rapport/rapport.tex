@@ -211,6 +211,24 @@ L'analyse des résultats a révélé plusieurs problèmes méthodologiques qui r
 
 Ces constats nous ont conduits à remettre en question notre approche initiale. Un R² élevé ne garantit pas la pertinence d'un modèle. Nous avons donc décidé de normaliser les données en intégrant la population et en calculant des taux de risque.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../outputs/predictions_vs_reel.png}
+    \caption{Prédictions vs valeurs réelles du nombre d'accidents.}
+    \label{fig:pred_vs_reel}
+\end{figure}
+
+Le modèle prédit bien les valeurs élevées (Paris), mais sous-estime systématiquement les communes intermédiaires.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../outputs/predictions_vs_reel_zoom.png}
+    \caption{Vue zoomée sur les communes avec moins de 50 accidents pour les prédictions vs les valeurs réelles du nombre d'accidents.}
+    \label{fig:pred_vs_reel_zoom}
+\end{figure}
+
+La dispersion importante autour de la diagonale confirme que le modèle est imprécis pour les petites communes.
+
 % ============================================================================
 \section{Analyse 3 : Prédiction des Taux de Risque}
 % ============================================================================
