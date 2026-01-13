@@ -63,6 +63,7 @@ Ce projet vise à répondre à trois questions :
 \subsection{Sources de données}
 
 Notre étude s'appuie sur quatre jeux de données, plus précisément en Île-de-France.
+Les quatres jeux de données viennent tous de data.gouv.
 
 \subsubsection{Accidents de vélo}
 Ce dataset national contient \textbf{80 022 accidents} impliquant des cyclistes sur l'ensemble de la France, dont \textbf{22 609 en Île-de-France}. Pour chaque accident, nous disposons de :
@@ -367,6 +368,20 @@ Plusieurs facteurs limitent la portée de nos conclusions :
     \item \textbf{Variables manquantes} : Nous n'avons pas accès au trafic automobile ni aux caractéristiques urbanistiques fines.
     \item \textbf{Proportion de zéros} : 33.6\% des communes n'ont aucun accident déclaré.
 \end{itemize}
+
+% ============================================================================
+\section{Contributions}
+% ============================================================================
+
+Ce projet a été réalisé de manière collaborative par les trois membres du groupe.
+
+\textbf{Travail commun :} Recherche et sélection des jeux de données sur data.gouv.fr, conception des nouvelles features (taux de risque, variables agrégées par commune), analyse critique des résultats, rédaction du rapport.
+
+\textbf{Nicolas Huyghe :} Fusion des datasets, préparation des données, implémentation des modèles de régression (Gradient Boosting, XGBoost).
+
+\textbf{David Chhoa :} Intégration des données de population INSEE, implémentation des modèles de classification, génération des visualisations.
+
+\textbf{Jérémie Masnou :} Création du script de préparation des données, modélisation des taux de risque normalisés, analyse des courbes ROC.
 
 % ============================================================================
 \section{Conclusion}
