@@ -21,7 +21,7 @@
 % Titre
 \title{\textbf{Analyse et Prédiction des Accidents de Vélo en Île-de-France}}
 
-\author{\centering Nicolas Huyghe \quad David Chhoa \quad Jérémie Masnou\\[0.5cm]
+\author{Nicolas Huyghe    \quad David Chhoa    \quad Jérémie Masnou\\[0.5cm]
 \textit{Projet Sciences des Données et Apprentissage 2025/2026}}
 
 \date{}
@@ -31,7 +31,10 @@
 \maketitle
 
 \begin{abstract}
-Ce projet fusionne trois jeux de données ouverts (accidents vélo, aménagements cyclables, comptages) pour analyser la sécurité routière des cyclistes en Île-de-France. Nous avons abordé deux problématiques : la classification du niveau de risque communal et la régression sur le nombre d'accidents. L'analyse des résultats de classification s'est révélée non concluante en raison de biais méthodologiques. Nous avons donc enrichi notre approche en intégrant un quatrième jeu de données (population INSEE) afin de prédire des taux de risque normalisés, définis de deux manières : le taux d'accidents par kilomètre d'aménagement cyclable et le taux d'accidents pour 10~000 habitants.
+Ce projet fusionne trois jeux de données ouverts (accidents vélo, aménagements cyclables, comptages du nombre de vélos) pour analyser la sécurité routière des cyclistes en Île-de-France. Nous avons abordé deux problématiques : 
+Peut-on identifier les communes présentant un risque élevé d’accidents de vélo ?
+Peut-on prédire le nombre brut d’accidents par commune ?  
+L'analyse des résultats de classification s'est révélée non concluante. Nous avons donc enrichi notre approche en intégrant un quatrième jeu de données (population INSEE) afin de prédire des taux de risque normalisés, définis de deux manières : le taux d'accidents par kilomètre d'aménagement cyclable et le taux d'accidents pour 10~000 habitants.
 
 \textbf{Mots-clés :} accidents vélo, machine learning, classification, régression, taux de risque, Île-de-France
 \end{abstract}
@@ -59,7 +62,7 @@ Ce projet vise à répondre à trois questions :
 
 \subsection{Sources de données}
 
-Notre étude s'appuie sur quatre jeux de données complémentaires, permettant une analyse multidimensionnelle du risque cycliste en Île-de-France.
+Notre étude s'appuie sur quatre jeux de données, plus précisément en Île-de-France.
 
 \subsubsection{Accidents de vélo}
 Ce dataset national contient \textbf{80 022 accidents} impliquant des cyclistes sur l'ensemble de la France, dont \textbf{22 609 en Île-de-France}. Pour chaque accident, nous disposons de :
@@ -88,7 +91,7 @@ Pour normaliser nos analyses, nous avons intégré les données de \textbf{popul
 
 \subsection{Fusion et création de variables}
 
-Les quatre sources de données ont été fusionnées au niveau communal en utilisant le \textbf{code INSEE} comme clé de jointure. Ce processus d'agrégation a produit un dataset final de \textbf{1 124 communes} caractérisées par \textbf{44 variables}.
+Les quatre sources de données ont été fusionnées au niveau communal en utilisant le \textbf{code INSEE} comme clé de jointure. Ce processus d'agrégation a produit un dataset final de \textbf{1 124 communes}.
 
 \subsubsection{Variables principales créées}
 
@@ -171,7 +174,7 @@ Ce résultat peut sembler surprenant : un modèle simple (régression logistique
 
 \subsection{Approche initiale}
 
-Notre deuxième objectif était de prédire le \textbf{nombre exact d'accidents} par commune, ce qui constitue un problème de régression. Sept algorithmes ont été comparés, allant de modèles linéaires simples à des méthodes d'ensemble avancées.
+Notre deuxième objectif était de prédire le \textbf{nombre exact d'accidents} par commune, ce qui constitue un problème de régression. On a comparé sept algorithmes.
 
 \begin{table}[H]
     \centering
@@ -198,13 +201,13 @@ Le modèle \textbf{Gradient Boosting} obtient les meilleures performances avec u
 
 L'analyse des résultats a révélé plusieurs problèmes méthodologiques qui remettent en question la validité de ces performances apparemment excellentes.
 
-\textbf{Corrélation paradoxale.} Nous observons une forte corrélation positive ($r = 0.60$) entre le nombre d'aménagements cyclables et le nombre d'accidents. Cette observation ne signifie pas que les aménagements sont dangereux, mais s'explique par un biais de confusion : les communes bien équipées attirent plus de cyclistes, ce qui augmente mécaniquement le nombre d'accidents en valeur absolue.
+\textbf{Corrélation paradoxale :} Nous observons une forte corrélation positive ($r = 0.60$) entre le nombre d'aménagements cyclables et le nombre d'accidents. Cette observation ne signifie pas que les aménagements sont dangereux, mais s'explique par un biais de confusion : les communes bien équipées attirent plus de cyclistes, ce qui augmente mécaniquement le nombre d'accidents en valeur absolue.
 
-\textbf{Effet de taille (Paris).} Paris, avec ses 20 arrondissements traités comme communes distinctes, concentre \textbf{61\% des accidents} de toute l'Île-de-France (13 853 sur 22 609). Le modèle "apprend" donc essentiellement à identifier Paris, ce qui gonfle artificiellement le R².
+\textbf{Effet de taille (Paris) :} Paris, avec ses 20 arrondissements traités comme communes distinctes, concentre \textbf{61\% des accidents} de toute l'Île-de-France (13 853 sur 22 609). Le modèle "apprend" donc essentiellement à identifier Paris, ce qui gonfle artificiellement le R².
 
-\textbf{MAPE élevé.} Malgré un R² de 89\%, le MAPE (Mean Absolute Percentage Error) atteint 83\%. Cette métrique révèle que les prédictions sont imprécises pour les petites communes, majoritaires dans le dataset.
+\textbf{MAPE élevé :} Malgré un R² de 89\%, le MAPE (Mean Absolute Percentage Error) atteint 83\%. Cette métrique révèle que les prédictions sont imprécises pour les petites communes, majoritaires dans le dataset.
 
-\textbf{Distribution asymétrique.} La distribution du nombre d'accidents présente une forte asymétrie (skewness = 6.21) : 33.6\% des communes n'ont aucun accident enregistré, tandis que quelques communes (Paris) en ont plus de 1 000.
+\textbf{Distribution asymétrique :} La distribution du nombre d'accidents présente une forte asymétrie (skewness = 6.21) : 33.6\% des communes n'ont aucun accident enregistré, tandis que quelques communes (Paris) en ont plus de 1 000.
 
 Ces constats nous ont conduits à remettre en question notre approche initiale. Un R² élevé ne garantit pas la pertinence d'un modèle. Nous avons donc décidé de normaliser les données en intégrant la population et en calculant des taux de risque.
 
@@ -225,7 +228,7 @@ Nous avons défini deux métriques de risque :
 \text{Taux}_{km} = \frac{\text{Nombre d'accidents}}{\text{Longueur des aménagements (km)}}
 \end{equation}
 
-Ce taux mesure le nombre d'accidents par kilomètre d'infrastructure cyclable. Il permet de comparer des communes indépendamment de leur niveau d'équipement.
+Ce taux mesure le nombre d'accidents par kilomètre d'infrastructure cyclable.
 
 \textbf{Taux de risque pour 10 000 habitants :}
 \begin{equation}
@@ -256,7 +259,7 @@ Les deux taux présentent une forte asymétrie (skewness élevé), ce qui indiqu
 
 \subsection{Résultats de la modélisation}
 
-Sept modèles de machine learning ont été testés pour prédire chaque taux de risque.
+Cinq modèles de machine learning ont été testés pour prédire chaque taux de risque.
 
 \begin{table}[H]
     \centering
@@ -296,11 +299,11 @@ Sept modèles de machine learning ont été testés pour prédire chaque taux de
 
 Les performances obtenues avec les taux de risque sont \textbf{nettement inférieures} à celles de l'approche par nombre brut (R² maximum de 30\% contre 89\%). Ce résultat est en réalité plus honnête et plus informatif.
 
-\textbf{Élimination du biais de taille.} En normalisant par la population ou la longueur d'aménagement, le modèle ne peut plus identifier simplement les grandes communes. Paris n'a plus un poids disproportionné.
+\textbf{Élimination du biais de taille :} En normalisant par la population ou la longueur d'aménagement, le modèle ne peut plus identifier simplement les grandes communes. Paris n'a plus un poids disproportionné.
 
-\textbf{Complexité réelle du risque.} Le risque d'accident cycliste dépend de nombreux facteurs absents de nos données : comportement des usagers, densité du trafic automobile, conditions météorologiques, qualité de l'éclairage.
+\textbf{Complexité réelle du risque :} Le risque d'accident cycliste dépend de nombreux facteurs absents de nos données : comportement des usagers, densité du trafic automobile, conditions météorologiques, qualité de l'éclairage.
 
-\textbf{Données insuffisantes.} Nous disposons de seulement 17 variables explicatives, ce qui est insuffisant pour capturer toute la complexité du phénomène.
+\textbf{Données insuffisantes :} Nous ne disposons pas assez de datasets permettant de capturer toute la complexité du problème.
 
 Pour le taux de risque par habitant, l'analyse de l'importance des features (Random Forest) révèle que la population (17.1\%), la longueur des aménagements (11.8\%) et la densité population/aménagement (10.4\%) sont les variables les plus influentes.
 
@@ -351,7 +354,6 @@ Plusieurs facteurs limitent la portée de nos conclusions :
 \section{Conclusion}
 % ============================================================================
 
-\newpage
 
 Ce projet a exploré différentes approches de machine learning pour modéliser le risque d'accidents de vélo en Île-de-France à partir de données ouvertes.
 
@@ -359,7 +361,7 @@ La \textbf{classification binaire} du risque communal (élevé vs faible) attein
 
 La \textbf{prédiction du nombre brut d'accidents} affiche un R² de 89\%, mais cette performance est biaisée par l'effet de taille des communes (Paris concentre 61\% des accidents) et une corrélation paradoxale entre aménagements et accidents.
 
-L'\textbf{approche par taux de risque normalisés} (par habitant ou par kilomètre d'aménagement) offre une méthodologie plus rigoureuse. Les performances plus modestes (R² de 20-30\%) reflètent la complexité réelle du phénomène et l'insuffisance des variables disponibles.
+L'\textbf{approche par taux de risque normalisés} (par habitant ou par kilomètre d'aménagement) offre une méthodologie plus rigoureuse. Les performances plus modestes (R² de 20-30\%) reflètent la complexité réelle du problème et l'insuffisance des données disponibles.
 
 Cette étude illustre qu'un indicateur de performance élevé ne garantit pas la validité d'un modèle. L'analyse critique des données et des résultats reste indispensable pour éviter des conclusions erronées.
 
