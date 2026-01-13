@@ -23,6 +23,7 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 ACCIDENTS_FILE = os.path.join(DATA_DIR, 'accidentsVelo.csv')
 AMENAGEMENTS_FILE = os.path.join(DATA_DIR, 'amenagements-velo-en-ile-de-france.csv')
 COMPTAGES_FILE = os.path.join(DATA_DIR, 'comptage-velo-donnees-compteurs.csv')
+POPULATION_FILE = os.path.join(DATA_DIR, 'POPULATION_MUNICIPALE_COMMUNES_FRANCE.xlsx')
 OUTPUT_FILE = os.path.join(DATA_DIR, 'dataset_final_idf.csv')
 
 # Départements Île-de-France
@@ -212,6 +213,33 @@ def associer_comptages_aux_communes(df_comptages, df_accidents_agg):
     print(f"  Communes avec compteurs associés: {len(agg_comptages)}")
     return agg_comptages
 
+def charger_population():
+    """Charge les données de population municipale pour l'IDF."""
+    print("\n" + "=" * 60)
+    print("Chargement des données de population...")
+    
+    df = pd.read_excel(POPULATION_FILE)
+    print(f"  Total communes France: {len(df)}")
+    
+    # Filtrer IDF (le département est en format string)
+    df['dep_str'] = df['dep'].astype(str).str.zfill(2)
+    df_idf = df[df['dep_str'].isin(IDF_DEPS)].copy()
+    print(f"  Communes IDF: {len(df_idf)}")
+    
+    # Préparer les données
+    df_idf['code_insee'] = df_idf['codgeo'].astype(str).str.zfill(5)
+    
+    # Utiliser p21_pop (population 2021, la plus récente)
+    df_pop = df_idf[['code_insee', 'libgeo', 'p21_pop']].copy()
+    df_pop = df_pop.rename(columns={'libgeo': 'nom_commune_pop', 'p21_pop': 'population'})
+    
+    # Nettoyer les valeurs
+    df_pop['population'] = pd.to_numeric(df_pop['population'], errors='coerce').fillna(0).astype(int)
+    
+    print(f"  Population totale IDF: {df_pop['population'].sum():,.0f}")
+    
+    return df_pop
+
 def creer_dataset_final():
     """Crée le dataset final en fusionnant toutes les sources."""
     print("\n" + "=" * 60)
@@ -229,7 +257,10 @@ def creer_dataset_final():
     df_comptages = charger_comptages()
     df_comptages_communes = associer_comptages_aux_communes(df_comptages, df_accidents_agg)
     
-    # 4. Fusion des datasets
+    # 4. Charger les données de population
+    df_population = charger_population()
+    
+    # 5. Fusion des datasets
     print("\n" + "=" * 60)
     print("Fusion des datasets...")
     
@@ -246,6 +277,14 @@ def creer_dataset_final():
     df_final = pd.merge(
         df_final,
         df_comptages_communes,
+        on='code_insee',
+        how='left'
+    )
+    
+    # Fusion avec population
+    df_final = pd.merge(
+        df_final,
+        df_population,
         on='code_insee',
         how='left'
     )
@@ -287,6 +326,10 @@ def creer_dataset_final():
         if col in df_final.columns:
             df_final[col] = df_final[col].fillna(0)
     
+    # Population: mettre 0 si pas de données (sera traité plus loin)
+    if 'population' in df_final.columns:
+        df_final['population'] = df_final['population'].fillna(0).astype(int)
+    
     # 6. Créer des features supplémentaires
     print("\nCréation de features supplémentaires...")
     
@@ -305,6 +348,41 @@ def creer_dataset_final():
         df_final['nb_accidents'] > 0,
         df_final['longueur_totale_amenagements'] / df_final['nb_accidents'],
         df_final['longueur_totale_amenagements']
+    )
+    
+    # ========================================
+    # TAUX DE RISQUE (nouvelles métriques)
+    # ========================================
+    print("\n  Calcul des taux de risque...")
+    
+    # Taux de risque 1: accidents par km d'aménagement
+    # (accidents pour 1 km d'aménagement cyclable)
+    df_final['taux_risque_par_km'] = np.where(
+        df_final['longueur_totale_amenagements'] > 0,
+        df_final['nb_accidents'] / (df_final['longueur_totale_amenagements'] / 1000),  # Convertir en km
+        0  # Si pas d'aménagement, taux à 0 (pas de risque mesurable)
+    )
+    
+    # Taux de risque 2: accidents pour 10 000 habitants
+    # (normalisation standard en épidémiologie)
+    df_final['taux_risque_par_habitant'] = np.where(
+        df_final['population'] > 0,
+        (df_final['nb_accidents'] / df_final['population']) * 10000,
+        0  # Si pas de population connue
+    )
+    
+    # Taux de risque 3: accidents graves pour 10 000 habitants
+    df_final['taux_risque_grave_par_habitant'] = np.where(
+        df_final['population'] > 0,
+        (df_final['nb_accidents_graves'] / df_final['population']) * 10000,
+        0
+    )
+    
+    # Densité de population (habitants par km d'aménagement)
+    df_final['densite_pop_amenagement'] = np.where(
+        df_final['longueur_totale_amenagements'] > 0,
+        df_final['population'] / (df_final['longueur_totale_amenagements'] / 1000),
+        0
     )
     
     # Indicateur de risque élevé (plus de X accidents)
@@ -348,8 +426,22 @@ def creer_dataset_final():
     print(df_final.groupby('departement').agg({
         'code_insee': 'count',
         'nb_accidents': 'sum',
-        'nb_amenagements': 'sum'
+        'nb_amenagements': 'sum',
+        'population': 'sum'
     }).rename(columns={'code_insee': 'nb_communes'}))
+    
+    print(f"\n  Statistiques des taux de risque:")
+    print(f"    Taux risque par km d'aménagement:")
+    print(f"      - Min: {df_final['taux_risque_par_km'].min():.4f}")
+    print(f"      - Max: {df_final['taux_risque_par_km'].max():.4f}")
+    print(f"      - Moyenne: {df_final['taux_risque_par_km'].mean():.4f}")
+    print(f"      - Médiane: {df_final['taux_risque_par_km'].median():.4f}")
+    print(f"    Taux risque pour 10 000 habitants:")
+    print(f"      - Min: {df_final['taux_risque_par_habitant'].min():.4f}")
+    print(f"      - Max: {df_final['taux_risque_par_habitant'].max():.4f}")
+    print(f"      - Moyenne: {df_final['taux_risque_par_habitant'].mean():.4f}")
+    print(f"      - Médiane: {df_final['taux_risque_par_habitant'].median():.4f}")
+    print(f"\n  Communes avec population connue: {(df_final['population'] > 0).sum()}")
     
     print(f"\n  Distribution des catégories de risque:")
     print(df_final['categorie_risque'].value_counts().sort_index())
