@@ -3,6 +3,20 @@
 
 ---
 
+# RÉPARTITION DES INTERVENANTS
+
+| Intervenant | Slides | Durée | Thèmes |
+|-------------|--------|-------|--------|
+| **Nicolas Huyghe** | 1-7 | ~4 min | Introduction, données, fusion, début classification |
+| **David Chhoa** | 8-14 | ~4 min | Fin classification, régression, analyse critique |
+| **Jérémie Masnou** | 15-22 | ~4 min | Graphiques, taux normalisés, conclusion |
+
+---
+
+# NICOLAS HUYGHE (Slides 1-7) — ~4 minutes
+
+---
+
 ## Slide 1 : Page de titre (30 sec)
 **Contenu :**
 - Titre : "Analyse et Prédiction des Accidents de Vélo en Île-de-France"
@@ -10,275 +24,275 @@
 - Projet SDA 2025/2026
 
 **À dire :**
-> Bonjour à tous. Nous sommes Nicolas, David et Jérémie, et nous allons vous présenter notre projet sur l'analyse et la prédiction des accidents de vélo en Île-de-France. Ce projet s'inscrit dans le cadre du cours de Science des Données et Apprentissage.
+> Bonjour à tous. Nous sommes Nicolas, David et Jérémie, et nous allons vous présenter notre projet d'analyse et de prédiction des accidents de vélo en Île-de-France, réalisé dans le cadre du cours de Science des Données et Apprentissage. Je vais commencer par vous présenter le contexte et les données, puis David vous parlera de nos modèles et de l'analyse critique, et enfin Jérémie conclura avec notre approche améliorée.
 
 ---
 
-## Slide 2 : Contexte et Problématique (1 min)
+## Slide 2 : Contexte et Problématique (45 sec)
 **Contenu :**
-- Essor du vélo en Île-de-France (graphique évolution si possible)
-- Politiques de mobilité durable, pistes cyclables, Vélib'
-- Enjeu de sécurité routière : 22 609 accidents de vélo enregistrés en IDF
-- Question centrale : peut-on prédire et prévenir ces accidents ?
+- Essor du vélo en Île-de-France (Vélib', pistes cyclables)
+- Politiques de mobilité durable en expansion
+- Enjeu de sécurité routière majeur
+- 22 609 accidents de vélo enregistrés en Île-de-France
+- Question : peut-on prédire et prévenir ces accidents ?
 
 **À dire :**
-> Le vélo connaît un essor considérable en Île-de-France ces dernières années. Les politiques de mobilité durable, le développement des pistes cyclables et des services comme Vélib' ont contribué à cette croissance. Cependant, cette augmentation du nombre de cyclistes s'accompagne d'un enjeu majeur de sécurité routière. En effet, plus de 22 000 accidents impliquant des cyclistes ont été enregistrés dans la région. Notre question centrale est donc : peut-on utiliser le machine learning pour mieux comprendre ce risque et potentiellement aider à le prévenir ?
+> Le vélo connaît un essor considérable en Île-de-France. Avec le développement de Vélib', des pistes cyclables et des politiques de mobilité durable, de plus en plus de franciliens utilisent le vélo au quotidien. Cependant, cette croissance s'accompagne d'un enjeu majeur de sécurité routière : plus de 22 600 accidents impliquant des cyclistes ont été enregistrés dans la région. Notre objectif est donc d'utiliser le machine learning pour mieux comprendre et potentiellement prédire ce risque.
 
 ---
 
-## Slide 3 : Questions de recherche (45 sec)
+## Slide 3 : Questions de Recherche (30 sec)
 **Contenu :**
-- Question 1 : **Classification** - Peut-on identifier les communes à risque élevé ?
-- Question 2 : **Régression** - Peut-on prédire le nombre d'accidents par commune ?
-- Question 3 : **Taux de risque** - Peut-on prédire des taux normalisés (par habitant, par km) ?
+- Classification : Identifier les communes à risque élevé
+- Régression : Prédire le nombre d'accidents par commune
+- Taux de risque : Prédire des taux normalisés (par habitant, par km)
 
 **À dire :**
-> Nous avons structuré notre étude autour de trois questions de recherche. Premièrement, un problème de classification : peut-on identifier automatiquement les communes présentant un risque élevé d'accidents ? Deuxièmement, un problème de régression : peut-on prédire le nombre exact d'accidents dans une commune donnée ? Et troisièmement, après avoir identifié des limites dans notre approche initiale, nous avons ajouté une troisième question : peut-on prédire des taux de risque normalisés, c'est-à-dire rapportés à la population ou à la longueur des aménagements ?
+> Nous avons structuré notre étude autour de trois questions. Premièrement, un problème de classification : peut-on identifier les communes à risque élevé ? Deuxièmement, un problème de régression : peut-on prédire le nombre d'accidents ? Et troisièmement, après avoir identifié des limites, nous avons ajouté une question sur les taux de risque normalisés.
 
 ---
 
-## Slide 4 : Sources de données (1 min 30)
+## Slide 4 : Sources de Données (1 min)
 **Contenu :**
-- 4 jeux de données de **data.gouv.fr** :
-  1. **Accidents vélo** : 80 022 accidents nationaux → 22 609 en IDF
-     - Localisation, date, gravité, conditions
-  2. **Aménagements cyclables** : 143 060 infrastructures en IDF
-     - Type de voie, longueur, revêtement
-  3. **Comptages vélo** : 933 757 mesures (69 compteurs)
-     - Trafic cycliste horaire
-  4. **Population INSEE** : 1 287 communes
-     - Données démographiques 2021
+- Accidents vélo : 80 022 nationaux → 22 609 en IDF (localisation, date, gravité, conditions)
+- Aménagements cyclables : 143 060 infrastructures (type de voie, longueur, revêtement)
+- Comptages vélo : 933 757 mesures (69 compteurs)
+- Population INSEE : 1 287 communes (2021)
 
 **À dire :**
-> Nous avons utilisé quatre jeux de données, tous issus du portail data.gouv.fr. Le premier dataset contient les accidents de vélo au niveau national, soit plus de 80 000 accidents, dont 22 609 en Île-de-France. Pour chaque accident, on a la localisation GPS, la date, l'heure, la gravité, et les conditions comme la météo ou l'éclairage.
-> 
-> Le deuxième dataset recense les aménagements cyclables en Île-de-France : plus de 143 000 infrastructures, avec le type de voie (piste séparée, bande cyclable, voie partagée), la longueur en mètres et le revêtement.
-> 
-> Le troisième dataset contient des données de comptage horaire provenant de 69 compteurs automatiques, soit près d'un million de mesures. Cela permet d'estimer le trafic cycliste, même si la couverture reste limitée.
-> 
-> Enfin, nous avons ajouté les données de population INSEE 2021 pour pouvoir normaliser nos analyses par le nombre d'habitants.
+> Nous avons utilisé quatre jeux de données, tous issus de data.gouv.fr. Le premier contient les accidents de vélo au niveau national, dont 22 600 en Île-de-France, avec la localisation, la date, la gravité et les conditions. Le deuxième recense plus de 143 000 infrastructures cyclables avec le type de voie et la longueur. Le troisième contient des données de comptage horaire provenant de 69 compteurs automatiques. Et enfin, les données de population INSEE 2021 que nous avons ajoutées pour normaliser nos analyses.
 
 ---
 
-## Slide 5 : Fusion et création de features (1 min)
+## Slide 5 : Fusion et Création de Features (45 sec)
 **Contenu :**
-- Schéma de fusion des 4 datasets
-- Clé de jointure : **code INSEE** de la commune
-- Dataset final : **1 124 communes**, **44 variables**
-- Nouvelles features créées :
-  - `nb_accidents`, `nb_accidents_graves`, `taux_accidents_graves`
-  - `longueur_totale_amenagements`, `ratio_pistes_cyclables`
-  - `taux_risque_par_km`, `taux_risque_par_habitant`
-  - `risque_eleve` (variable binaire pour la classification)
+- Fusion au niveau communal (code INSEE)
+- Dataset final : 1 124 communes
+- Features créées : nb_accidents, nb_accidents_graves, longueur_totale_amenagements, ratio_pistes_cyclables, taux_risque_par_km, taux_risque_par_habitant, risque_eleve
 
 **À dire :**
-> L'étape de préparation des données a été cruciale. Nous avons fusionné les quatre sources au niveau communal en utilisant le code INSEE comme clé de jointure. Après nettoyage et agrégation, nous obtenons un dataset de 1 124 communes caractérisées par 44 variables.
-> 
-> Nous avons créé plusieurs nouvelles features. Pour les accidents : le nombre total, le nombre d'accidents graves, et le taux de gravité. Pour les aménagements : la longueur totale en mètres et le ratio de pistes cyclables séparées. Et pour l'analyse normalisée : le taux de risque par kilomètre d'aménagement et le taux pour 10 000 habitants. Enfin, nous avons créé une variable binaire "risque élevé" pour la classification.
+> J'ai ensuite fusionné ces quatre sources de données au niveau communal en utilisant le code INSEE comme clé de jointure. Après nettoyage et agrégation, on obtient un dataset de 1 124 communes. Nous avons créé plusieurs nouvelles features : le nombre d'accidents et d'accidents graves, la longueur totale des aménagements, le ratio de pistes cyclables séparées, et des taux de risque normalisés par kilomètre et par habitant.
 
 ---
 
-## Slide 6 : Classification - Méthodologie (1 min)
+## Slide 6 : Classification - Méthodologie (45 sec)
 **Contenu :**
-- Définition : **risque élevé** si nb_accidents ≥ 75e percentile (≥ 6 accidents)
-- 6 modèles testés :
-  - Régression Logistique (avec pondération des classes)
-  - Random Forest
-  - SVM (noyau RBF)
-  - Gradient Boosting
-  - XGBoost
-  - LightGBM
-- Validation croisée 5-fold stratifiée
+- Risque élevé : nb_accidents ≥ 75e percentile (≥ 6 accidents)
+- 6 modèles : Régression Logistique, Random Forest, SVM (RBF), Gradient Boosting, XGBoost, LightGBM
+- Validation croisée 5-fold
 - Métriques : Accuracy, F1-Score, ROC-AUC
 
 **À dire :**
-> Pour la classification, nous avons défini une commune comme étant "à risque élevé" si son nombre d'accidents dépasse le 75e percentile de la distribution, soit 6 accidents ou plus. Cela représente environ 25% des communes.
-> 
-> Nous avons testé six algorithmes de classification : la régression logistique avec pondération des classes pour gérer le déséquilibre, le Random Forest, le SVM avec noyau RBF, et trois méthodes de boosting : Gradient Boosting, XGBoost et LightGBM.
-> 
-> Pour évaluer les modèles, nous avons utilisé une validation croisée 5-fold stratifiée et trois métriques principales : l'accuracy, le F1-score qui équilibre précision et rappel, et le ROC-AUC qui mesure la capacité à distinguer les deux classes.
+> Pour la classification, nous avons défini une commune comme étant à risque élevé si son nombre d'accidents dépasse le 75e percentile, soit 6 accidents ou plus. Nous avons testé six algorithmes : la régression logistique, le Random Forest, le SVM avec noyau RBF, et trois méthodes de boosting. L'évaluation se fait par validation croisée 5-fold avec trois métriques : l'accuracy, le F1-score et le ROC-AUC.
 
 ---
 
-## Slide 7 : Classification - Résultats (45 sec)
+## Slide 7 : Classification - Résultats (30 sec)
 **Contenu :**
-- Tableau des résultats :
-  | Modèle | Accuracy | F1-Score | ROC-AUC |
-  |--------|----------|----------|---------|
-  | Rég. Logistique | 0.884 | **0.794** | **0.956** |
-  | Random Forest | 0.898 | 0.793 | 0.951 |
-  | SVM | 0.880 | 0.791 | 0.953 |
-- **Meilleur : Régression Logistique** (AUC 95.6%)
+- Meilleur modèle : Régression Logistique (AUC 95.6%)
+- Surprenant : modèle simple > modèles complexes
+- Explication : relation essentiellement linéaire
 
 **À dire :**
-> Voici les résultats de la classification. La régression logistique obtient les meilleures performances avec un F1-score de 79.4% et surtout un ROC-AUC de 95.6%. Ce résultat peut sembler surprenant : un modèle simple surpasse des modèles plus complexes comme le boosting ou les forêts aléatoires.
-> 
-> Cela s'explique par la nature du problème : la relation entre les features et le risque est essentiellement linéaire. Les communes à risque élevé sont celles avec beaucoup d'aménagements, car elles attirent plus de cyclistes.
+> Les résultats montrent que la régression logistique obtient les meilleures performances avec un AUC de 95.6%. C'est surprenant car un modèle simple surpasse les modèles complexes comme XGBoost. Cela s'explique par la nature linéaire de la relation : les communes à risque élevé sont celles avec beaucoup d'aménagements. Je passe maintenant la parole à David pour la suite des résultats.
 
 ---
 
-## Slide 8 : Courbe ROC (30 sec)
+# DAVID CHHOA (Slides 8-14) — ~4 minutes
+
+---
+
+## Slide 8 : Classification - Courbes ROC (30 sec)
 **Contenu :**
-- Image : roc_curves_classification.png
+- Image des courbes ROC
 - Tous les modèles > 0.94 AUC
-- Courbes très proches du coin supérieur gauche
+- Excellente séparation des classes
 
 **À dire :**
-> Voici les courbes ROC des différents modèles. On observe que tous les modèles atteignent un AUC supérieur à 0.94, ce qui indique une excellente capacité à distinguer les communes à risque élevé des autres. Les courbes sont très proches du coin supérieur gauche, signe d'un bon compromis entre sensibilité et spécificité.
+> Merci Nicolas. Voici les courbes ROC de nos modèles de classification. On observe que tous les modèles atteignent un AUC supérieur à 0.94, ce qui indique une excellente capacité à distinguer les communes à risque élevé des autres. Les courbes sont très proches du coin supérieur gauche.
 
 ---
 
-## Slide 9 : Régression - Résultats initiaux (45 sec)
+## Slide 9 : Classification - Matrice de Confusion (30 sec)
 **Contenu :**
-- Objectif : prédire le **nombre exact d'accidents** par commune
-- Tableau des résultats :
-  | Modèle | RMSE | R² | CV R² |
-  |--------|------|-----|-------|
-  | Gradient Boosting | 37.06 | **0.892** | 0.897 |
-  | XGBoost | 37.53 | 0.889 | 0.900 |
-  | Random Forest | 37.80 | 0.888 | 0.886 |
-- Résultat apparemment **excellent** : R² = 89%
+- Image de la matrice de confusion
 
 **À dire :**
-> Notre deuxième objectif était de prédire le nombre exact d'accidents par commune, un problème de régression classique. Le Gradient Boosting obtient les meilleures performances avec un R² de 89.2%, ce qui signifie que le modèle explique près de 90% de la variance.
-> 
-> À première vue, ce résultat semble excellent. Cependant, une analyse plus approfondie nous a conduits à remettre en question cette performance.
+> Voici la matrice de confusion du meilleur modèle. On voit que le modèle fait peu d'erreurs, avec un bon équilibre entre les faux positifs et les faux négatifs. La précision est particulièrement bonne sur la classe majoritaire.
 
 ---
 
-## Slide 10 : Analyse critique - Problème 1 (1 min)
+## Slide 10 : Classification - Features importantes (30 sec)
 **Contenu :**
-- **Corrélation paradoxale** : plus d'aménagements → plus d'accidents
-- Graphique de corrélation (r = 0.60)
-- Explication : biais de confusion
-  - Plus d'aménagements → plus de cyclistes → plus d'accidents en absolu
-  - Ce n'est PAS que les aménagements sont dangereux
+- Image des features importantes
 
 **À dire :**
-> Premier problème : nous avons observé une corrélation paradoxale. Les communes avec plus d'aménagements cyclables ont plus d'accidents, avec un coefficient de corrélation de 0.60. Autrement dit, plus une commune investit dans les pistes cyclables, plus elle a d'accidents.
-> 
-> Est-ce que cela signifie que les aménagements sont dangereux ? Non, bien sûr. C'est un biais de confusion classique : les communes bien équipées attirent plus de cyclistes, ce qui augmente mécaniquement le nombre d'accidents en valeur absolue, même si le risque individuel diminue peut-être. Le modèle apprend cette corrélation, mais elle n'est pas causale.
+> Ce graphique montre l'importance des features pour la classification. Sans surprise, les variables liées aux aménagements cyclables et à la taille de la commune sont les plus importantes. Cela nous amène justement à notre analyse de régression.
 
 ---
 
-## Slide 11 : Analyse critique - Problèmes 2 et 3 (1 min)
+## Slide 11 : Régression - Résultats Initiaux (45 sec)
 **Contenu :**
-- **Effet Paris** : 61% des accidents concentrés dans 20 arrondissements
-  - Le modèle "apprend" surtout à identifier Paris
-  - Gonfle artificiellement le R²
-- **MAPE élevé** : 83% malgré R² de 89%
-  - R² bon pour les grandes valeurs (Paris)
-  - Mauvais pour les petites communes (majorité du dataset)
-- **Distribution asymétrique** : 33.6% des communes sans accident
+- Objectif : prédire le nombre exact d'accidents
+- Meilleur : Gradient Boosting (R² = 89.2%)
+- Résultat apparemment excellent... mais attention !
 
 **À dire :**
-> Deuxième problème : l'effet Paris. Les 20 arrondissements de Paris concentrent à eux seuls 61% des accidents de toute l'Île-de-France, soit près de 14 000 accidents sur 22 600. Le modèle "apprend" donc essentiellement à identifier Paris, ce qui gonfle artificiellement le R².
-> 
-> Troisième problème : malgré ce R² impressionnant de 89%, le MAPE, l'erreur absolue moyenne en pourcentage, atteint 83%. Cela signifie que les prédictions sont en moyenne à 83% d'écart par rapport à la réalité pour les petites communes, qui sont majoritaires dans notre dataset.
-> 
-> Enfin, la distribution est très asymétrique : un tiers des communes n'ont aucun accident enregistré.
+> Notre deuxième objectif était de prédire le nombre exact d'accidents par commune. Le Gradient Boosting, que Nicolas a implémenté, obtient un R² de 89.2%, ce qui signifie que le modèle explique près de 90% de la variance. À première vue, c'est un résultat excellent. Mais une analyse plus approfondie nous a conduits à remettre en question cette performance.
 
 ---
 
-## Slide 12 : Graphiques prédictions vs réel (45 sec)
+## Slide 12 : Régression - Corrélations (30 sec)
 **Contenu :**
-- Image : predictions_vs_reel.png (vue globale)
-- Image : predictions_vs_reel_zoom.png (zoom < 100 accidents)
-- Commentaire : bonne prédiction pour Paris, dispersion pour les petites communes
+- Image de la matrice de corrélation
 
 **À dire :**
-> Ces graphiques illustrent parfaitement le problème. Sur la vue globale à gauche, on voit que le modèle prédit bien les valeurs élevées, notamment les arrondissements parisiens qui sont les points en haut à droite.
+> Cette matrice de corrélation révèle un premier problème. On observe une forte corrélation positive entre le nombre d'aménagements et le nombre d'accidents. Plus une commune a d'aménagements, plus elle a d'accidents. C'est contre-intuitif.
+
+---
+
+## Slide 13 : Analyse Critique - Corrélation Paradoxale (1 min)
+**Contenu :**
+- Plus d'aménagements → plus d'accidents (r = 0.60)
+- Est-ce que les aménagements sont dangereux ? NON !
+- Biais de confusion : Plus d'aménagements → plus de cyclistes → plus d'accidents
+- Le modèle apprend cette corrélation, mais elle n'est pas causale
+
+**À dire :**
+> Analysons cette corrélation paradoxale. Avec un coefficient de 0.60, plus une commune investit dans les pistes cyclables, plus elle a d'accidents. Est-ce que cela signifie que les aménagements sont dangereux ? Bien sûr que non ! C'est un biais de confusion classique : les communes bien équipées attirent plus de cyclistes, ce qui augmente mécaniquement le nombre d'accidents en valeur absolue, même si le risque individuel diminue peut-être. Le modèle apprend cette corrélation, mais elle n'est pas causale.
+
+---
+
+## Slide 14 : Analyse Critique - Effet Paris et MAPE (1 min)
+**Contenu :**
+- Effet Paris : 20 arrondissements = 61% des accidents (13 853 sur 22 609)
+- Le modèle apprend surtout à identifier Paris
+- MAPE élevé : R² = 89% mais MAPE = 83%
+- Prédictions imprécises pour les petites communes
+- Distribution asymétrique : 33.6% des communes sans accident
+
+**À dire :**
+> Deuxième problème : l'effet Paris. Les 20 arrondissements de Paris concentrent à eux seuls 61% des accidents de toute l'Île-de-France, soit près de 14 000 accidents. Le modèle apprend donc essentiellement à identifier Paris, ce qui gonfle artificiellement le R².
 > 
+> Troisième problème : malgré ce R² de 89%, le MAPE, l'erreur moyenne en pourcentage, atteint 83%. Les prédictions sont donc très imprécises pour les petites communes, qui sont majoritaires. Enfin, un tiers des communes n'ont aucun accident enregistré. Je laisse maintenant Jérémie vous présenter notre solution à ces problèmes.
+
+---
+
+# JÉRÉMIE MASNOU (Slides 15-22) — ~4 minutes
+
+---
+
+## Slide 15 : Prédictions vs Valeurs Réelles (30 sec)
+**Contenu :**
+- Image : graphique global des prédictions
+
+**À dire :**
+> Merci David. Ce graphique illustre parfaitement les problèmes qu'il vient de décrire. On voit que le modèle prédit bien les valeurs élevées, notamment les arrondissements parisiens qui sont les points en haut à droite du graphique.
+
+---
+
+## Slide 16 : Prédictions vs Valeurs Réelles - Zoom (30 sec)
+**Contenu :**
+- Image : zoom sur les petites communes
+
+**À dire :**
 > Mais quand on zoome sur les communes avec moins de 100 accidents, qui représentent la grande majorité, on observe une dispersion importante autour de la diagonale. Le modèle est donc imprécis là où on en aurait le plus besoin.
 
 ---
 
-## Slide 13 : Solution - Taux de risque normalisés (1 min)
+## Slide 17 : Solution - Taux de Risque Normalisés (1 min)
 **Contenu :**
-- **Intégration des données de population INSEE**
-- Deux nouvelles métriques :
-  - **Taux par km** = Accidents / Longueur aménagements (km)
-    - Compare les communes indépendamment de leur équipement
-  - **Taux pour 10k habitants** = (Accidents / Population) × 10 000
-    - Métrique classique en épidémiologie
+- Intégration des données de population INSEE
+- Taux par km = Accidents / Longueur aménagements (km) → Compare indépendamment de l'équipement
+- Taux pour 10k hab = (Accidents / Population) × 10 000 → Métrique épidémiologique
 - Objectif : éliminer l'effet de taille
 
 **À dire :**
-> Face à ces biais, nous avons décidé de changer d'approche. Nous avons intégré les données de population INSEE et défini deux nouvelles métriques de risque normalisées.
-> 
-> Le taux par kilomètre divise le nombre d'accidents par la longueur totale des aménagements. Cela permet de comparer les communes indépendamment de leur niveau d'équipement : une commune avec 10 km de pistes et 10 accidents a le même taux qu'une commune avec 1 km et 1 accident.
-> 
-> Le taux pour 10 000 habitants est une métrique classique en épidémiologie. Elle normalise par la population et permet de comparer le risque entre communes de tailles différentes.
+> Face à ces biais, j'ai proposé une nouvelle approche. En intégrant les données de population INSEE, nous avons défini deux nouvelles métriques de risque normalisées. Le taux par kilomètre divise le nombre d'accidents par la longueur totale des aménagements, ce qui permet de comparer les communes indépendamment de leur niveau d'équipement. Le taux pour 10 000 habitants est une métrique classique en épidémiologie qui normalise par la population. L'objectif est d'éliminer l'effet de taille qui biaisait nos résultats.
 
 ---
 
-## Slide 14 : Taux de risque - Résultats (1 min)
+## Slide 18 : Taux de Risque - Résultats (45 sec)
 **Contenu :**
-- Tableaux des résultats :
-  - Taux par km : Ridge R² = 30%, MAPE = 70%
-  - Taux par habitant : Random Forest R² = 19%, MAPE = 34%
-- Performances **nettement inférieures** mais **plus honnêtes**
-- Le modèle ne peut plus "tricher" avec l'effet de taille
+- Performances nettement inférieures mais plus réalistes
+- Le modèle ne peut plus exploiter l'effet de taille
+- Paris n'a plus un poids disproportionné
+- Reflète la complexité du problème
 
 **À dire :**
-> Les résultats avec les taux normalisés sont nettement inférieurs : un R² maximum de 30% pour le taux par kilomètre avec Ridge, et 19% pour le taux par habitant avec Random Forest.
-> 
-> Loin d'être un échec, ces résultats sont en réalité plus honnêtes. Le modèle ne peut plus exploiter l'effet de taille des communes. Paris n'a plus un poids disproportionné dans l'apprentissage.
-> 
-> Ces performances modestes reflètent la complexité réelle du phénomène : le risque d'accident dépend de nombreux facteurs que nous n'avons pas dans nos données, comme le comportement des usagers, la densité du trafic automobile, ou la qualité de l'éclairage.
+> Les résultats avec les taux normalisés sont nettement inférieurs : un R² maximum de 30% pour le taux par kilomètre et 19% pour le taux par habitant. Mais loin d'être un échec, ces résultats sont plus réalistes. Le modèle ne peut plus "tricher" en identifiant simplement les grandes communes. Paris n'a plus un poids disproportionné. Ces performances modestes reflètent la complexité réelle du risque cycliste.
 
 ---
 
-## Slide 15 : Synthèse comparative (1 min)
+## Slide 19 : Synthèse Comparative (45 sec)
 **Contenu :**
-- Tableau récapitulatif :
-  | Analyse | Modèle | Performance | Validité |
-  |---------|--------|-------------|----------|
-  | Classification | Rég. Log. | AUC 96% | ✓ Élevée |
-  | Régression brute | Grad. Boost. | R² 89% | ⚠ Limitée |
-  | Taux par km | Ridge | R² 30% | ✓ Élevée |
-  | Taux par hab | Random Forest | R² 19% | ✓ Élevée |
-- **Paradoxe** : meilleure performance ≠ meilleur modèle
+- Tableau récapitulatif avec validité
+- Paradoxe : meilleure performance ≠ meilleur modèle
+- Un R² élevé ne garantit pas la validité
+- L'analyse critique est indispensable
 
 **À dire :**
-> Ce tableau résume l'ensemble de nos résultats. La classification fonctionne bien avec un AUC de 96%. La régression sur le nombre brut affiche un R² impressionnant de 89%, mais sa validité est limitée par les biais que nous avons identifiés. Les approches par taux normalisés ont des performances plus modestes mais une validité élevée.
-> 
-> Le paradoxe de notre étude est que la meilleure performance correspond à l'approche la moins valide. C'est un rappel important : en science des données, un bon score ne garantit pas un bon modèle. L'analyse critique est indispensable.
+> Ce tableau résume l'ensemble de nos résultats. La classification fonctionne bien avec un AUC de 96%. La régression brute affiche un R² de 89%, mais sa validité est limitée. Les approches par taux normalisés ont des performances plus modestes mais une validité élevée. Le paradoxe de notre étude est que la meilleure performance correspond à l'approche la moins valide. C'est un rappel important : un bon score ne garantit pas un bon modèle.
 
 ---
 
-## Slide 16 : Limites de l'étude (45 sec)
+## Slide 20 : Limites de l'Étude (30 sec)
 **Contenu :**
-- **Sous-déclaration** : tous les accidents ne sont pas signalés
-- **Couverture limitée** : seulement 69 compteurs pour toute l'IDF
-- **Variables manquantes** : trafic automobile, urbanisme, météo détaillée
-- **33.6% de zéros** : nécessiterait des modèles Zero-Inflated
+- Sous-déclaration des accidents
+- Couverture limitée : 69 compteurs pour toute l'IDF
+- Variables manquantes : trafic automobile, urbanisme, météo
+- 33.6% de communes sans accident → modèles Zero-Inflated ?
 
 **À dire :**
-> Notre étude présente plusieurs limites. Tous les accidents ne sont pas déclarés aux autorités, notamment les accidents mineurs. Nous n'avons que 69 compteurs pour estimer le trafic cycliste de toute l'Île-de-France. Il nous manque des variables importantes comme le trafic automobile ou les caractéristiques urbanistiques. Enfin, un tiers des communes n'ont aucun accident, ce qui pourrait nécessiter des modèles spécifiques comme les modèles Zero-Inflated.
+> Notre étude présente plusieurs limites. Tous les accidents ne sont pas déclarés, notamment les accidents mineurs. Nous n'avons que 69 compteurs pour estimer le trafic cycliste. Il nous manque des variables importantes comme le trafic automobile ou l'urbanisme. Et un tiers des communes sans accident pourrait nécessiter des modèles spécifiques comme les modèles Zero-Inflated.
 
 ---
 
-## Slide 17 : Conclusion (45 sec)
+## Slide 21 : Conclusion (45 sec)
 **Contenu :**
 - ✓ Classification efficace pour identifier les communes prioritaires
 - ⚠ Régression brute biaisée par l'effet de taille
-- ✓ Taux normalisés : approche méthodologiquement rigoureuse
-- **Enseignement principal** : Performance ≠ Validité
+- ✓ Taux normalisés : approche plus réaliste
+- Enseignement principal : Performance ≠ Validité
 - L'analyse critique des données est essentielle
 
 **À dire :**
-> En conclusion, la classification binaire du risque fonctionne bien et peut servir à identifier les communes prioritaires pour des interventions de sécurité. La régression sur le nombre brut d'accidents, malgré son R² élevé, est biaisée et doit être interprétée avec prudence. L'approche par taux normalisés est plus rigoureuse mais révèle la complexité du problème.
-> 
-> Le principal enseignement de ce projet est qu'une bonne performance ne garantit pas la validité d'un modèle. L'analyse critique des données et des résultats est essentielle pour éviter des conclusions erronées. Merci de votre attention.
+> En conclusion, la classification binaire du risque fonctionne bien et peut servir à identifier les communes prioritaires pour des interventions de sécurité. La régression sur le nombre brut, malgré son R² élevé, est biaisée par l'effet de taille. Notre approche par taux normalisés est plus réaliste mais révèle la complexité du problème. Le principal enseignement de ce projet est qu'une bonne performance ne garantit pas la validité d'un modèle. L'analyse critique des données est essentielle.
 
 ---
 
-## Slide 18 : Questions ?
+## Slide 22 : Questions (15 sec)
 **Contenu :**
-- "Merci pour votre attention"
-- "Questions ?"
-- Contacts / GitHub (optionnel)
+- Merci pour votre attention
+- Questions ?
+
+**À dire :**
+> Merci pour votre attention. Nous sommes maintenant disponibles pour répondre à vos questions.
+
+---
+
+# QUESTIONS POTENTIELLES ET RÉPONSES
+
+**Q : Pourquoi la régression logistique surpasse les modèles complexes ?**
+> La relation entre les features et le risque est essentiellement linéaire. Les communes à risque élevé sont celles avec beaucoup d'aménagements, car elles attirent plus de cyclistes. Un modèle linéaire capture bien cette relation.
+
+**Q : Comment avez-vous géré le déséquilibre des classes ?**
+> Nous avons utilisé la pondération des classes (class_weight='balanced') et la stratification lors du split train/test pour maintenir les proportions.
+
+**Q : Pourquoi ne pas exclure Paris de l'analyse ?**
+> C'est une piste intéressante qu'on aurait pu explorer. On pourrait développer un modèle spécifique pour Paris et un autre pour le reste de l'IDF.
+
+**Q : Quelles données supplémentaires amélioreraient les modèles ?**
+> Le trafic automobile serait crucial, ainsi que les caractéristiques urbanistiques (densité du bâti, présence de commerces), la météo détaillée, et surtout le trafic cycliste réel qui n'est mesuré que par 69 compteurs.
+
+**Q : Comment interprétez-vous la corrélation paradoxale ?**
+> C'est un biais de confusion classique en épidémiologie. Les communes qui investissent dans les aménagements attirent plus de cyclistes, donc plus d'accidents en absolu. Le risque individuel pourrait même diminuer.
+
+**Q : Pourquoi utiliser le 75e percentile pour définir le risque élevé ?**
+> C'est un seuil courant qui permet d'identifier le quartile supérieur de la distribution. Cela donne environ 25% de communes à risque élevé, un ratio raisonnable pour la classification.
+
+**Q : Les modèles Zero-Inflated auraient-ils amélioré les résultats ?**
+> Probablement oui, car 33.6% des communes n'ont aucun accident. Ces modèles traitent séparément la probabilité d'avoir zéro et la distribution des valeurs positives.
 
 ---
 
