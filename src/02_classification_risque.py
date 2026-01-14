@@ -27,7 +27,7 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.svm import SVC
 from sklearn.metrics import (accuracy_score, precision_score, recall_score, f1_score,
                               roc_auc_score, confusion_matrix, classification_report,
-                              roc_curve, precision_recall_curve)
+                              roc_curve)
 from xgboost import XGBClassifier
 from lightgbm import LGBMClassifier
 
@@ -227,7 +227,7 @@ def tracer_courbes_roc(trained_models, X_test_scaled, y_test):
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'roc_curves_classification.png'), dpi=150)
     plt.close()
-    print(f"\n✓ Courbes ROC sauvegardées: {OUTPUT_DIR}/roc_curves_classification.png")
+    print(f"\nCourbes ROC sauvegardées: {OUTPUT_DIR}/roc_curves_classification.png")
 
 def tracer_importance_features(trained_models, feature_names):
     """Trace l'importance des features pour les modèles basés sur les arbres."""
@@ -253,7 +253,7 @@ def tracer_importance_features(trained_models, feature_names):
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'feature_importance_classification.png'), dpi=150)
     plt.close()
-    print(f"✓ Importance des features sauvegardée: {OUTPUT_DIR}/feature_importance_classification.png")
+    print(f"Importance des features sauvegardée: {OUTPUT_DIR}/feature_importance_classification.png")
 
 def tracer_matrice_confusion(trained_models, X_test_scaled, y_test, best_model_name):
     """Trace la matrice de confusion pour le meilleur modèle."""
@@ -272,7 +272,7 @@ def tracer_matrice_confusion(trained_models, X_test_scaled, y_test, best_model_n
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'confusion_matrix_classification.png'), dpi=150)
     plt.close()
-    print(f"✓ Matrice de confusion sauvegardée: {OUTPUT_DIR}/confusion_matrix_classification.png")
+    print(f"Matrice de confusion sauvegardée: {OUTPUT_DIR}/confusion_matrix_classification.png")
     
     # Afficher le rapport de classification
     print(f"\nRapport de classification ({best_model_name}):")
@@ -303,7 +303,7 @@ def tracer_comparaison_metriques(results_df):
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'metrics_comparison_classification.png'), dpi=150)
     plt.close()
-    print(f"✓ Comparaison des métriques sauvegardée: {OUTPUT_DIR}/metrics_comparison_classification.png")
+    print(f"Comparaison des métriques sauvegardée: {OUTPUT_DIR}/metrics_comparison_classification.png")
 
 def generer_conclusion(results_df, best_model_name):
     """Génère une conclusion textuelle de l'analyse."""
@@ -345,10 +345,6 @@ RECOMMANDATIONS:
     
     print(conclusion)
     
-    # Sauvegarder la conclusion
-    with open(os.path.join(OUTPUT_DIR, 'conclusion_classification.txt'), 'w') as f:
-        f.write(conclusion)
-    print(f"\n✓ Conclusion sauvegardée: {OUTPUT_DIR}/conclusion_classification.txt")
 
 def main():
     """Fonction principale."""
@@ -390,7 +386,7 @@ def main():
     # 8. Conclusion
     generer_conclusion(results_sorted, best_model_name)
     
-    print("   ANALYSE DE CLASSIFICATION TERMINÉE")
+    print("   \nANALYSE DE CLASSIFICATION TERMINÉE")
     
     return results_sorted, trained_models
 

@@ -2,9 +2,9 @@
 """
 Analyse et prédiction des taux de risque d'accidents vélo en Île-de-France.
 
-Ce script:
+Ce script :
 1. Compare deux taux de risque: par km d'aménagement et pour 10 000 habitants
-2. Applique des modèles de Machine Learning pour prédire ces taux
+2. Applique différents modèles de Machine Learning pour prédire ces taux
 3. Évalue les performances de chaque approche
 """
 
@@ -16,8 +16,7 @@ from scipy import stats
 import warnings
 import os
 
-# Machine Learning
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import Ridge, Lasso, ElasticNet
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
@@ -151,7 +150,7 @@ def analyser_correlations(df):
     plt.close()
 
 def preparer_features(df):
-    """Prépare les features pour le machine learning."""
+    """Prépare les features"""
     
     # Features numériques à utiliser
     feature_cols = [
@@ -236,7 +235,7 @@ def entrainer_modeles(X_train, X_test, y_train, y_test, nom_cible):
     return pd.DataFrame(resultats), meilleur_modele
 
 def predire_taux_risque(df, cible, nom_cible):
-    """Pipeline complet de prédiction pour un taux de risque."""
+    """Prédiction pour un taux de risque."""
     
     print(f"PRÉDICTION: {nom_cible}")
     

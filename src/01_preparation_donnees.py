@@ -324,14 +324,14 @@ def creer_dataset_final():
     # Population: mettre 0 si pas de données (sera traité plus loin)
     if 'population' in df_final.columns:
         df_final['population'] = df_final['population'].fillna(0).astype(int)
-    
+
     # 6. Créer des features supplémentaires
     print("\nCréation de features supplémentaires")
     
     # Département à partir du code INSEE
     df_final['departement'] = df_final['code_insee'].str[:2]
     
-    # Densité d'aménagements (aménagements par accident évité ?)
+    # Densité d'aménagements
     df_final['ratio_amenagements_par_accident'] = np.where(
         df_final['nb_accidents'] > 0,
         df_final['nb_amenagements'] / df_final['nb_accidents'],
@@ -345,7 +345,7 @@ def creer_dataset_final():
         df_final['longueur_totale_amenagements']
     )
     
-    # TAUX DE RISQUE (nouvelles métriques)
+    # TAUX DE RISQUE
     print("\n  Calcul des taux de risque")
     
     # Taux de risque 1: accidents par km d'aménagement
@@ -357,7 +357,6 @@ def creer_dataset_final():
     )
     
     # Taux de risque 2: accidents pour 10 000 habitants
-    # (normalisation standard en épidémiologie)
     df_final['taux_risque_par_habitant'] = np.where(
         df_final['population'] > 0,
         (df_final['nb_accidents'] / df_final['population']) * 10000,

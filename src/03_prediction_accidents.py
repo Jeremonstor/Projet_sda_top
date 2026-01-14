@@ -279,38 +279,6 @@ def tracer_predictions_vs_reel_zoom(predictions, y_test, best_model_name):
     plt.close()
     print(f" Graphique prédictions vs réel (zoom) sauvegardé: {OUTPUT_DIR}/predictions_vs_reel_zoom.png")
 
-def tracer_residus(predictions, y_test, best_model_name):
-    """Trace l'analyse des résidus pour le meilleur modèle."""
-    y_pred = predictions[best_model_name]
-    residus = y_test.values - y_pred
-    
-    fig, axes = plt.subplots(1, 3, figsize=(16, 5))
-    
-    # Distribution des résidus
-    axes[0].hist(residus, bins=50, edgecolor='black', alpha=0.7)
-    axes[0].axvline(x=0, color='r', linestyle='--', linewidth=2)
-    axes[0].set_xlabel('Résidu', fontsize=12)
-    axes[0].set_ylabel('Fréquence', fontsize=12)
-    axes[0].set_title('Distribution des Résidus', fontsize=12)
-    
-    # Résidus vs Prédictions
-    axes[1].scatter(y_pred, residus, alpha=0.5, edgecolors='k', linewidth=0.5)
-    axes[1].axhline(y=0, color='r', linestyle='--', linewidth=2)
-    axes[1].set_xlabel('Prédictions', fontsize=12)
-    axes[1].set_ylabel('Résidus', fontsize=12)
-    axes[1].set_title('Résidus vs Prédictions', fontsize=12)
-    
-    # Q-Q plot
-    from scipy import stats
-    stats.probplot(residus, dist="norm", plot=axes[2])
-    axes[2].set_title('Q-Q Plot', fontsize=12)
-    
-    plt.suptitle(f'Analyse des Résidus - {best_model_name}', fontsize=14, y=1.02)
-    plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, 'residuals_analysis.png'), dpi=150)
-    plt.close()
-    print(f"      Analyse des résidus sauvegardée: {OUTPUT_DIR}/residuals_analysis.png")
-
 def tracer_importance_features(trained_models, feature_names):
     """Trace l'importance des features pour les modèles basés sur les arbres."""
     fig, axes = plt.subplots(2, 2, figsize=(14, 12))
@@ -423,26 +391,15 @@ INTERPRÉTATION:
 - Les communes avec plus d'aménagements cyclables ont généralement 
   plus d'accidents enregistrés (effet de trafic cycliste plus important).
 
-INSIGHTS CLÉS:
+REMARQUES:
 1. Le nombre d'aménagements cyclables est fortement corrélé au nombre 
    d'accidents, mais cela reflète aussi une utilisation plus intensive.
 2. Les communes parisiennes ont un profil spécifique avec beaucoup 
    d'aménagements ET beaucoup d'accidents.
-3. Pour réduire les accidents, il faut améliorer la qualité des 
-   aménagements, pas seulement leur quantité.
 
-RECOMMANDATIONS:
-1. Privilégier les pistes cyclables séparées de la circulation.
-2. Améliorer l'éclairage sur les voies cyclables.
-3. Cibler les communes à haut risque avec peu d'aménagements.
 """
     
     print(conclusion)
-    
-    # Sauvegarder la conclusion
-    with open(os.path.join(OUTPUT_DIR, 'conclusion_regression.txt'), 'w') as f:
-        f.write(conclusion)
-    print(f"\n      Conclusion sauvegardée: {OUTPUT_DIR}/conclusion_regression.txt")
 
 def main():
     """Fonction principale."""
@@ -475,7 +432,6 @@ def main():
         
     tracer_predictions_vs_reel(predictions, y_test, best_model_name)
     tracer_predictions_vs_reel_zoom(predictions, y_test, best_model_name)
-    tracer_residus(predictions, y_test, best_model_name)
     tracer_importance_features(trained_models, feature_names)
     tracer_comparaison_metriques(results_sorted)
     tracer_correlation_features(X, y, feature_names)
