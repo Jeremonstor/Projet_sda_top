@@ -47,10 +47,8 @@ plt.rcParams['font.size'] = 10
 
 def charger_donnees():
     """Charge et prépare les données pour la régression."""
-    print("=" * 70)
     print("CHARGEMENT DES DONNÉES")
-    print("=" * 70)
-    
+        
     df = pd.read_csv(DATASET_FILE)
     print(f"Dataset chargé: {len(df)} communes")
     
@@ -93,10 +91,8 @@ def charger_donnees():
 
 def preparer_donnees(X, y):
     """Prépare les données pour l'entraînement."""
-    print("\n" + "=" * 70)
     print("PRÉPARATION DES DONNÉES")
-    print("=" * 70)
-    
+        
     # Split train/test
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42
@@ -137,18 +133,14 @@ def definir_modeles():
 
 def evaluer_modeles(models, X_train_scaled, X_test_scaled, y_train, y_test):
     """Évalue tous les modèles et retourne les résultats."""
-    print("\n" + "=" * 70)
     print("ÉVALUATION DES MODÈLES")
-    print("=" * 70)
-    
+        
     results = []
     trained_models = {}
     predictions = {}
     
     for name, model in models.items():
-        print(f"\n{'─' * 50}")
         print(f"Entraînement: {name}")
-        print(f"{'─' * 50}")
         
         # Entraînement
         model.fit(X_train_scaled, y_train)
@@ -196,10 +188,8 @@ def evaluer_modeles(models, X_train_scaled, X_test_scaled, y_train, y_test):
 
 def afficher_tableau_comparatif(results_df):
     """Affiche un tableau comparatif des résultats."""
-    print("\n" + "=" * 70)
     print("TABLEAU COMPARATIF DES MODÈLES")
-    print("=" * 70)
-    
+        
     # Trier par R²
     results_sorted = results_df.sort_values('R²', ascending=False)
     
@@ -242,7 +232,7 @@ def tracer_predictions_vs_reel(predictions, y_test, best_model_name):
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'predictions_vs_reel.png'), dpi=150)
     plt.close()
-    print(f"\n✓ Graphique prédictions vs réel sauvegardé: {OUTPUT_DIR}/predictions_vs_reel.png")
+    print(f"\n      Graphique prédictions vs réel sauvegardé: {OUTPUT_DIR}/predictions_vs_reel.png")
 
 def tracer_predictions_vs_reel_zoom(predictions, y_test, best_model_name):
     """Trace les prédictions vs valeurs réelles - version zoomée sur les petites valeurs."""
@@ -287,7 +277,7 @@ def tracer_predictions_vs_reel_zoom(predictions, y_test, best_model_name):
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'predictions_vs_reel_zoom.png'), dpi=150)
     plt.close()
-    print(f"✓ Graphique prédictions vs réel (zoom) sauvegardé: {OUTPUT_DIR}/predictions_vs_reel_zoom.png")
+    print(f" Graphique prédictions vs réel (zoom) sauvegardé: {OUTPUT_DIR}/predictions_vs_reel_zoom.png")
 
 def tracer_residus(predictions, y_test, best_model_name):
     """Trace l'analyse des résidus pour le meilleur modèle."""
@@ -319,7 +309,7 @@ def tracer_residus(predictions, y_test, best_model_name):
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'residuals_analysis.png'), dpi=150)
     plt.close()
-    print(f"✓ Analyse des résidus sauvegardée: {OUTPUT_DIR}/residuals_analysis.png")
+    print(f"      Analyse des résidus sauvegardée: {OUTPUT_DIR}/residuals_analysis.png")
 
 def tracer_importance_features(trained_models, feature_names):
     """Trace l'importance des features pour les modèles basés sur les arbres."""
@@ -345,7 +335,7 @@ def tracer_importance_features(trained_models, feature_names):
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'feature_importance_regression.png'), dpi=150)
     plt.close()
-    print(f"✓ Importance des features sauvegardée: {OUTPUT_DIR}/feature_importance_regression.png")
+    print(f"      Importance des features sauvegardée: {OUTPUT_DIR}/feature_importance_regression.png")
 
 def tracer_comparaison_metriques(results_df):
     """Trace un graphique de comparaison des métriques."""
@@ -372,7 +362,7 @@ def tracer_comparaison_metriques(results_df):
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'metrics_comparison_regression.png'), dpi=150)
     plt.close()
-    print(f"✓ Comparaison des métriques sauvegardée: {OUTPUT_DIR}/metrics_comparison_regression.png")
+    print(f"      Comparaison des métriques sauvegardée: {OUTPUT_DIR}/metrics_comparison_regression.png")
 
 def tracer_correlation_features(X, y, feature_names):
     """Trace la corrélation entre les features et la variable cible."""
@@ -395,14 +385,13 @@ def tracer_correlation_features(X, y, feature_names):
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, 'correlation_features.png'), dpi=150)
     plt.close()
-    print(f"✓ Corrélation des features sauvegardée: {OUTPUT_DIR}/correlation_features.png")
+    print(f"      Corrélation des features sauvegardée: {OUTPUT_DIR}/correlation_features.png")
 
 def generer_conclusion(results_df, best_model_name, X, y):
     """Génère une conclusion textuelle de l'analyse."""
     print("\n" + "=" * 70)
     print("CONCLUSION")
-    print("=" * 70)
-    
+        
     best_row = results_df[results_df['Modèle'] == best_model_name].iloc[0]
     
     # Trouver la feature la plus corrélée
@@ -412,7 +401,6 @@ def generer_conclusion(results_df, best_model_name, X, y):
     
     conclusion = f"""
 ANALYSE DE RÉGRESSION - PRÉDICTION DU NOMBRE D'ACCIDENTS DE VÉLO
-═══════════════════════════════════════════════════════════════════════
 
 OBJECTIF:
 Prédire le nombre d'accidents de vélo par commune en Île-de-France
@@ -454,13 +442,11 @@ RECOMMANDATIONS:
     # Sauvegarder la conclusion
     with open(os.path.join(OUTPUT_DIR, 'conclusion_regression.txt'), 'w') as f:
         f.write(conclusion)
-    print(f"\n✓ Conclusion sauvegardée: {OUTPUT_DIR}/conclusion_regression.txt")
+    print(f"\n      Conclusion sauvegardée: {OUTPUT_DIR}/conclusion_regression.txt")
 
 def main():
     """Fonction principale."""
-    print("\n" + "█" * 70)
     print("  PRÉDICTION DU NOMBRE D'ACCIDENTS DE VÉLO - ÎLE-DE-FRANCE")
-    print("█" * 70)
     
     # 1. Charger les données
     X, y, feature_names, df = charger_donnees()
@@ -482,13 +468,11 @@ def main():
     
     # 6. Identifier le meilleur modèle (par R²)
     best_model_name = results_sorted.iloc[0]['Modèle']
-    print(f"\n🏆 Meilleur modèle: {best_model_name}")
+    print(f"\n Meilleur modèle: {best_model_name}")
     
     # 7. Visualisations
-    print("\n" + "=" * 70)
     print("GÉNÉRATION DES VISUALISATIONS")
-    print("=" * 70)
-    
+        
     tracer_predictions_vs_reel(predictions, y_test, best_model_name)
     tracer_predictions_vs_reel_zoom(predictions, y_test, best_model_name)
     tracer_residus(predictions, y_test, best_model_name)
@@ -499,9 +483,7 @@ def main():
     # 8. Conclusion
     generer_conclusion(results_sorted, best_model_name, X, y)
     
-    print("\n" + "█" * 70)
-    print("  ✅ ANALYSE DE RÉGRESSION TERMINÉE")
-    print("█" * 70)
+    print("  ANALYSE DE RÉGRESSION TERMINÉE")
     
     return results_sorted, trained_models
 

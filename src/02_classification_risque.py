@@ -48,9 +48,9 @@ plt.rcParams['font.size'] = 10
 
 def charger_donnees():
     """Charge et prépare les données pour la classification."""
-    print("=" * 70)
-    print("CHARGEMENT DES DONNÉES")
-    print("=" * 70)
+     
+    print("Chargement des données")
+     
     
     df = pd.read_csv(DATASET_FILE)
     print(f"Dataset chargé: {len(df)} communes")
@@ -95,9 +95,9 @@ def charger_donnees():
 
 def preparer_donnees(X, y):
     """Prépare les données pour l'entraînement."""
-    print("\n" + "=" * 70)
-    print("PRÉPARATION DES DONNÉES")
-    print("=" * 70)
+     
+    print("Préparation des données")
+     
     
     # Split train/test
     X_train, X_test, y_train, y_test = train_test_split(
@@ -142,17 +142,17 @@ def definir_modeles():
 
 def evaluer_modeles(models, X_train_scaled, X_test_scaled, y_train, y_test):
     """Évalue tous les modèles et retourne les résultats."""
-    print("\n" + "=" * 70)
-    print("ÉVALUATION DES MODÈLES")
-    print("=" * 70)
+     
+    print("Évaluation des modèles")
+     
     
     results = []
     trained_models = {}
     
     for name, model in models.items():
-        print(f"\n{'─' * 50}")
+        
         print(f"Entraînement: {name}")
-        print(f"{'─' * 50}")
+           
         
         # Entraînement
         model.fit(X_train_scaled, y_train)
@@ -194,9 +194,9 @@ def evaluer_modeles(models, X_train_scaled, X_test_scaled, y_train, y_test):
 
 def afficher_tableau_comparatif(results_df):
     """Affiche un tableau comparatif des résultats."""
-    print("\n" + "=" * 70)
-    print("TABLEAU COMPARATIF DES MODÈLES")
-    print("=" * 70)
+     
+    print("Tabeleau comparatif des modèles")
+     
     
     # Trier par F1-Score
     results_sorted = results_df.sort_values('F1-Score', ascending=False)
@@ -307,15 +307,14 @@ def tracer_comparaison_metriques(results_df):
 
 def generer_conclusion(results_df, best_model_name):
     """Génère une conclusion textuelle de l'analyse."""
-    print("\n" + "=" * 70)
+     
     print("CONCLUSION")
-    print("=" * 70)
+     
     
     best_row = results_df[results_df['Modèle'] == best_model_name].iloc[0]
     
     conclusion = f"""
 ANALYSE DE CLASSIFICATION - RISQUE D'ACCIDENTS DE VÉLO
-═══════════════════════════════════════════════════════════════════════
 
 OBJECTIF:
 Prédire si une commune d'Île-de-France présente un risque élevé 
@@ -353,9 +352,8 @@ RECOMMANDATIONS:
 
 def main():
     """Fonction principale."""
-    print("\n" + "█" * 70)
+    
     print("  CLASSIFICATION DU RISQUE D'ACCIDENTS DE VÉLO - ÎLE-DE-FRANCE")
-    print("█" * 70)
     
     # 1. Charger les données
     X, y, feature_names, df = charger_donnees()
@@ -377,12 +375,12 @@ def main():
     
     # 6. Identifier le meilleur modèle (par F1-Score)
     best_model_name = results_sorted.iloc[0]['Modèle']
-    print(f"\n🏆 Meilleur modèle: {best_model_name}")
+    print(f"\n Meilleur modèle: {best_model_name}")
     
     # 7. Visualisations
-    print("\n" + "=" * 70)
+     
     print("GÉNÉRATION DES VISUALISATIONS")
-    print("=" * 70)
+     
     
     tracer_courbes_roc(trained_models, X_test_scaled, y_test)
     tracer_importance_features(trained_models, feature_names)
@@ -392,9 +390,7 @@ def main():
     # 8. Conclusion
     generer_conclusion(results_sorted, best_model_name)
     
-    print("\n" + "█" * 70)
-    print("  ✅ ANALYSE DE CLASSIFICATION TERMINÉE")
-    print("█" * 70)
+    print("   ANALYSE DE CLASSIFICATION TERMINÉE")
     
     return results_sorted, trained_models
 

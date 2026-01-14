@@ -18,7 +18,6 @@ from datetime import datetime
 
 warnings.filterwarnings('ignore')
 
-# Chemins des fichiers
 DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 ACCIDENTS_FILE = os.path.join(DATA_DIR, 'accidentsVelo.csv')
 AMENAGEMENTS_FILE = os.path.join(DATA_DIR, 'amenagements-velo-en-ile-de-france.csv')
@@ -31,8 +30,7 @@ IDF_DEPS = ['75', '77', '78', '91', '92', '93', '94', '95']
 
 def charger_accidents():
     """Charge et filtre les données d'accidents pour l'IDF."""
-    print("=" * 60)
-    print("Chargement des données d'accidents...")
+    print("Chargement des données d'accidents")
     
     df = pd.read_csv(ACCIDENTS_FILE, dtype=str)
     print(f"  Total accidents France: {len(df)}")
@@ -59,7 +57,7 @@ def charger_accidents():
 
 def agreger_accidents_par_commune(df_accidents):
     """Agrège les accidents par commune."""
-    print("\nAgrégation des accidents par commune...")
+    print("\nAgrégation des accidents par commun")
     
     agg = df_accidents.groupby('code_insee').agg(
         nb_accidents=('Num_Acc', 'count'),
@@ -87,8 +85,7 @@ def agreger_accidents_par_commune(df_accidents):
 
 def charger_amenagements():
     """Charge et agrège les aménagements vélo par commune."""
-    print("\n" + "=" * 60)
-    print("Chargement des données d'aménagements vélo...")
+    print("Chargement des données d'aménagements vélo")
     
     df = pd.read_csv(AMENAGEMENTS_FILE, sep=';', dtype=str)
     print(f"  Total aménagements: {len(df)}")
@@ -100,7 +97,7 @@ def charger_amenagements():
     df['longueur'] = pd.to_numeric(df['longueur'], errors='coerce')
     
     # Agrégation par commune
-    print("\nAgrégation des aménagements par commune...")
+    print("\nAgrégation des aménagements par commune")
     agg = df.groupby('code_insee').agg(
         nom_commune=('nom_com', 'first'),
         nb_amenagements=('osm_id', 'count'),
@@ -127,12 +124,11 @@ def charger_amenagements():
 
 def charger_comptages():
     """Charge et agrège les comptages vélo."""
-    print("\n" + "=" * 60)
-    print("Chargement des données de comptage vélo...")
+    print("Chargement des données de comptage vélo")
     
     # Le fichier comptage n'a pas de code INSEE directement
     # On va devoir utiliser les coordonnées géographiques pour faire un lien
-    # Pour simplifier, on agrège par site de comptage et on extrait les coordonnées
+    # Pour simplifier on agrège par site de comptage et on extrait les coordonnées
     
     df = pd.read_csv(COMPTAGES_FILE, sep=';', dtype=str)
     print(f"  Total enregistrements comptage: {len(df)}")
@@ -176,7 +172,7 @@ def associer_comptages_aux_communes(df_comptages, df_accidents_agg):
     Associe les comptages aux communes les plus proches.
     Utilise les coordonnées des accidents pour faire le lien.
     """
-    print("\nAssociation des comptages aux communes...")
+    print("\nAssociation des comptages aux communes")
     
     # Pour chaque compteur, trouver la commune la plus proche
     from scipy.spatial.distance import cdist
@@ -215,8 +211,7 @@ def associer_comptages_aux_communes(df_comptages, df_accidents_agg):
 
 def charger_population():
     """Charge les données de population municipale pour l'IDF."""
-    print("\n" + "=" * 60)
-    print("Chargement des données de population...")
+    print("Chargement des données de population")
     
     df = pd.read_excel(POPULATION_FILE)
     print(f"  Total communes France: {len(df)}")
@@ -242,9 +237,7 @@ def charger_population():
 
 def creer_dataset_final():
     """Crée le dataset final en fusionnant toutes les sources."""
-    print("\n" + "=" * 60)
-    print("CRÉATION DU DATASET FINAL")
-    print("=" * 60)
+    print("Création du dataset final")
     
     # 1. Charger et agréger les accidents
     df_accidents = charger_accidents()
@@ -261,8 +254,10 @@ def creer_dataset_final():
     df_population = charger_population()
     
     # 5. Fusion des datasets
-    print("\n" + "=" * 60)
-    print("Fusion des datasets...")
+    
+    print("Fusion des datasets")
+
+
     
     # Fusion accidents + aménagements (left join pour garder toutes les communes avec accidents)
     df_final = pd.merge(
@@ -296,7 +291,7 @@ def creer_dataset_final():
     print(f"    - Communes avec aménagements uniquement: {(df_final['_merge_amenagements'] == 'right_only').sum()}")
     
     # 5. Traitement des valeurs manquantes
-    print("\nTraitement des valeurs manquantes...")
+    print("\nTraitement des valeurs manquantes")
     
     # Communes sans accidents: mettre 0
     accident_cols = ['nb_accidents', 'nb_accidents_graves', 'nb_accidents_mortels', 
@@ -331,7 +326,7 @@ def creer_dataset_final():
         df_final['population'] = df_final['population'].fillna(0).astype(int)
     
     # 6. Créer des features supplémentaires
-    print("\nCréation de features supplémentaires...")
+    print("\nCréation de features supplémentaires")
     
     # Département à partir du code INSEE
     df_final['departement'] = df_final['code_insee'].str[:2]
@@ -350,10 +345,8 @@ def creer_dataset_final():
         df_final['longueur_totale_amenagements']
     )
     
-    # ========================================
     # TAUX DE RISQUE (nouvelles métriques)
-    # ========================================
-    print("\n  Calcul des taux de risque...")
+    print("\n  Calcul des taux de risque")
     
     # Taux de risque 1: accidents par km d'aménagement
     # (accidents pour 1 km d'aménagement cyclable)
@@ -408,14 +401,11 @@ def creer_dataset_final():
     df_final = df_final[df_final['departement'].isin(IDF_DEPS)].copy()
     
     # 8. Sauvegarder
-    print("\n" + "=" * 60)
     print(f"Sauvegarde du dataset final: {OUTPUT_FILE}")
     df_final.to_csv(OUTPUT_FILE, index=False)
     
     # 9. Résumé
-    print("\n" + "=" * 60)
-    print("RÉSUMÉ DU DATASET FINAL")
-    print("=" * 60)
+    print("Résumé du dataset final")
     print(f"  Nombre de communes: {len(df_final)}")
     print(f"  Nombre de colonnes: {len(df_final.columns)}")
     print(f"\n  Colonnes:")
@@ -450,4 +440,4 @@ def creer_dataset_final():
 
 if __name__ == "__main__":
     df = creer_dataset_final()
-    print("\n✅ Dataset final créé avec succès!")
+    print("\n Dataset final créé avec succès!")
