@@ -41,9 +41,7 @@ def charger_donnees():
 
 def analyser_distribution(df, colonne, titre):
     """Analyse la distribution d'une variable cible."""
-    print(f"\n{'='*60}")
-    print(f"ANALYSE: {titre}")
-    print('='*60)
+    print(f"Analyse: {titre}")
     
     data = df[colonne]
     data_non_zero = data[data > 0]
@@ -72,9 +70,8 @@ def analyser_distribution(df, colonne, titre):
 
 def comparer_distributions(df):
     """Compare les distributions des deux taux de risque."""
-    print("\n" + "="*80)
     print("ANALYSE DES DISTRIBUTIONS DES TAUX DE RISQUE")
-    print("="*80)
+    
     
     # Analyser chaque taux
     stats_km = analyser_distribution(df, 'taux_risque_par_km', 
@@ -117,9 +114,7 @@ def comparer_distributions(df):
 
 def analyser_correlations(df):
     """Analyse les corrélations avec les features."""
-    print("\n\n" + "="*80)
     print("ANALYSE DES CORRÉLATIONS")
-    print("="*80)
     
     # Features à analyser
     features = ['nb_amenagements', 'longueur_totale_amenagements', 'population', 
@@ -130,7 +125,6 @@ def analyser_correlations(df):
     # Calculer les corrélations
     print("\nCorrélations de Pearson:")
     print(f"\n{'Feature':<35} {'Par km':<15} {'Par habitant':<15}")
-    print("-"*65)
     
     for feat in features:
         if feat in df.columns:
@@ -244,9 +238,7 @@ def entrainer_modeles(X_train, X_test, y_train, y_test, nom_cible):
 def predire_taux_risque(df, cible, nom_cible):
     """Pipeline complet de prédiction pour un taux de risque."""
     
-    print(f"\n{'='*80}")
     print(f"PRÉDICTION: {nom_cible}")
-    print('='*80)
     
     # Préparer les données
     X, feature_names = preparer_features(df)
@@ -272,7 +264,7 @@ def predire_taux_risque(df, cible, nom_cible):
     )
     
     # Afficher les résultats
-    print(f"\n--- Résultats (cible transformée en log) ---")
+    print(f"\nRésultats (cible transformée en log)")
     resultats_sorted = resultats.sort_values('R²', ascending=False)
     print(resultats_sorted.to_string(index=False))
     
@@ -352,14 +344,13 @@ def visualiser_predictions(y_test_km, y_pred_km, y_test_hab, y_pred_hab,
     plt.savefig(os.path.join(RESULTS_DIR, 'predictions_taux_risque.png'), dpi=150)
     plt.close()
     
-    print(f"\n✅ Graphique sauvegardé: predictions_taux_risque.png")
+    print(f"\n Graphique sauvegardé: predictions_taux_risque.png")
 
 def comparer_resultats(resultats_km, resultats_hab):
     """Compare les performances sur les deux cibles."""
     
-    print("\n" + "="*80)
     print("COMPARAISON DES RÉSULTATS")
-    print("="*80)
+    
     
     # Meilleur modèle pour chaque cible
     best_km = resultats_km.loc[resultats_km['R²'].idxmax()]
@@ -399,9 +390,7 @@ def comparer_resultats(resultats_km, resultats_hab):
 
 def main():
     """Fonction principale."""
-    print("="*80)
     print("ANALYSE ET PRÉDICTION DES TAUX DE RISQUE")
-    print("="*80)
     
     # Charger les données
     df = charger_donnees()
@@ -433,7 +422,7 @@ def main():
     # 6. Comparaison finale
     comparer_resultats(resultats_km, resultats_hab)
     
-    print("\n\n✅ Analyse terminée!")
+    print("\n\n Analyse terminée!")
     print(f"   Graphiques sauvegardés dans: {RESULTS_DIR}")
 
 if __name__ == "__main__":
